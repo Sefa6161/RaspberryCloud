@@ -33,4 +33,9 @@ public class DataService {
         return dataRepository.findByDatatype(datatype);
     }
 
+    public String addData(Data data) {
+        dataRepository.save(data);
+        return "Speichern erfolgreich";
+    }
+
 }
