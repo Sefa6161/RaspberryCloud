@@ -1,5 +1,6 @@
 package com.Projekt.RaspberryCloud.service;
 
+import java.io.File;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,10 @@ public class DataService {
 
     public List<Data> showTable() {
         return dataRepository.findAll();
+    }
+
+    public List<Data> getDataByDatatype(String datatype) {
+        return dataRepository.findByDatatype(datatype);
     }
 
 }

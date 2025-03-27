@@ -17,6 +17,7 @@ public class Data {
 
     private String name;
     private String path;
+    private String datatype;
 
     private File file;
 
@@ -24,17 +25,19 @@ public class Data {
     public Data() {
     }
 
-    public Data(Integer id, File file, String name, String path) {
+    public Data(Integer id, File file, String datatype, String name, String path) {
         this.id = id;
         this.name = name;
         this.path = path;
         this.file = file;
+        this.datatype = datatype;
     }
 
-    public Data(File file, String name, String path) {
+    public Data(File file, String datatype, String name, String path) {
         this.name = name;
         this.path = path;
         this.file = file;
+        this.datatype = datatype;
     }
 
     // Getter and Setter
@@ -44,6 +47,14 @@ public class Data {
 
     public File getFile() {
         return file;
+    }
+
+    public void setDatatype(String datatype) {
+        this.datatype = datatype;
+    }
+
+    public String getDatatype() {
+        return datatype;
     }
 
     public String getPath() {
