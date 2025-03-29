@@ -1,6 +1,6 @@
 package com.Projekt.RaspberryCloud.service;
 
-import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +25,13 @@ public class DataService {
         return "Speichern erfolgreich";
     }
 
-    public List<Data> showTable() {
-        return dataRepository.findAll();
+    public List<String> showTable() {
+        List<Data> dataList = dataRepository.findAll();
+        List<String> dataListToString = new ArrayList<String>();
+        for (Data data : dataList) {
+            dataListToString.add(data.getPath() + "/" + data.getName());
+        }
+        return dataListToString;
     }
 
     public List<Data> getDataByDatatype(String datatype) {

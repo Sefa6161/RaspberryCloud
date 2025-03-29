@@ -36,7 +36,7 @@ public class DataController {
     }
 
     @GetMapping("/allData")
-    public List<Data> showTable() {
+    public List<String> showTable() {
         return dataService.showTable();
     }
 
