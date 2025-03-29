@@ -22,29 +22,13 @@ public class DataService {
         this.dataRepository = dataRepository;
     }
 
-    public String saveNewFile() {
-        Data newData = new Data();
-        dataRepository.save(newData);
-
-        return "Speichern erfolgreich";
-    }
-
-    public List<String> showTable() {
+    public List<Data> showTable() {
         List<Data> dataList = dataRepository.findAll();
-        List<String> dataListToString = new ArrayList<String>();
-        for (Data data : dataList) {
-            dataListToString.add(data.getPath() + "/" + data.getName());
-        }
-        return dataListToString;
+        return dataList;
     }
 
     public List<Data> getDataByDatatype(String datatype) {
         return dataRepository.findByDatatype(datatype);
-    }
-
-    public String addData(Data data) {
-        dataRepository.save(data);
-        return "Speichern erfolgreich";
     }
 
     // ToDO: Es wird nicht gegengecheckt ob die Hochzuladende Datei bereits

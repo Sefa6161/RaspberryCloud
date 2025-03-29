@@ -32,24 +32,14 @@ public class DataController {
         return "Start Seite";
     }
 
-    @GetMapping("/newFile")
-    public String newFile() {
-        return dataService.saveNewFile();
-    }
-
     @GetMapping("/allData")
-    public List<String> showTable() {
+    public List<Data> showTable() {
         return dataService.showTable();
     }
 
     @GetMapping("/{datatype}")
     public List<Data> getDataByDatatype(@PathVariable String datatype) {
         return dataService.getDataByDatatype(datatype);
-    }
-
-    @PostMapping("/add")
-    public String addData(@RequestBody Data data) {
-        return dataService.addData(data);
     }
 
     @PostMapping("/upload")

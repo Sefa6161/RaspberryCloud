@@ -18,7 +18,8 @@ public class Data {
     private String name;
     private String path;
     private String datatype;
-
+    private int downloadCounter;
+    private String uploadUser;
     private File file;
 
     // Constructor
@@ -41,6 +42,22 @@ public class Data {
     }
 
     // Getter and Setter
+    public String getUploadUser() {
+        return uploadUser;
+    }
+
+    public void setUploadUser(String uploadUser) {
+        this.uploadUser = uploadUser;
+    }
+
+    public int getDownloadCounter() {
+        return downloadCounter;
+    }
+
+    public void setDownloadCounter(int downloadCounter) {
+        this.downloadCounter = downloadCounter;
+    }
+
     public void setFile(File file) {
         this.file = file;
     }
