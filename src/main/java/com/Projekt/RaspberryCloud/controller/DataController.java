@@ -43,8 +43,8 @@ public class DataController {
     }
 
     @PostMapping("/upload")
-    public String upload(@RequestPart("file") MultipartFile file) {
-        return dataService.upload(file);
+    public String upload(@RequestPart("file") MultipartFile file, @RequestParam String path) {
+        return dataService.upload(file, path);
     }
 
 }

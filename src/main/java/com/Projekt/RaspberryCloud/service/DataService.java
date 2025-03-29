@@ -1,9 +1,9 @@
 package com.Projekt.RaspberryCloud.service;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,16 +33,25 @@ public class DataService {
 
     // ToDO: Es wird nicht gegengecheckt ob die Hochzuladende Datei bereits
     // existiert
-    public String upload(MultipartFile file) {
+    public String upload(MultipartFile file, String path) {
         Data newData;
         try {
-            byte[] fileInput = file.getBytes();
-            Path filePath = Paths.get("src/main/resources/uploads", file.getOriginalFilename());
-            Files.write(filePath, fileInput);
-            newData = new Data(null, "pdf", file.getOriginalFilename(), filePath.getParent().toString());
+            Path filePath = Paths.get(path);
+            if (!Files.exists(filePath)) {
+                File folder = new File(filePath.toString());
+                folder.mkdirs();
+            }
+
+            filePath = Paths.get(path, file.getOriginalFilename());
+            Files.write(filePath, file.getBytes());
+            newData = new Data(null,
+                    file.getContentType(),
+                    file.getOriginalFilename(),
+                    filePath.getParent().toString());
+
             dataRepository.save(newData);
         } catch (Exception e) {
-            System.out.println("Fehler beim Einlesen der Datei");
+            e.printStackTrace();
         }
 
         return "Datei gespeichert";
