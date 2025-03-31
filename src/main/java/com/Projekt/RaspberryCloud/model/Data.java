@@ -7,8 +7,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "Data-Table")
 public class Data {
     @Id
@@ -20,82 +24,22 @@ public class Data {
     private String datatype;
     private int downloadCounter;
     private String uploadUser;
-    private File file;
 
     // Constructor
     public Data() {
     }
 
-    public Data(Integer id, File file, String datatype, String name, String path) {
+    public Data(Integer id, String datatype, String name, String path) {
         this.id = id;
         this.name = name;
         this.path = path;
-        this.file = file;
         this.datatype = datatype;
     }
 
-    public Data(File file, String datatype, String name, String path) {
+    public Data(String datatype, String name, String path) {
         this.name = name;
         this.path = path;
-        this.file = file;
         this.datatype = datatype;
-    }
-
-    // Getter and Setter
-    public String getUploadUser() {
-        return uploadUser;
-    }
-
-    public void setUploadUser(String uploadUser) {
-        this.uploadUser = uploadUser;
-    }
-
-    public int getDownloadCounter() {
-        return downloadCounter;
-    }
-
-    public void setDownloadCounter(int downloadCounter) {
-        this.downloadCounter = downloadCounter;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    public File getFile() {
-        return file;
-    }
-
-    public void setDatatype(String datatype) {
-        this.datatype = datatype;
-    }
-
-    public String getDatatype() {
-        return datatype;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
 }

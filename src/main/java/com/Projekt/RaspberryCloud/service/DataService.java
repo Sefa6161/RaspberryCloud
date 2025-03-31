@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.Projekt.RaspberryCloud.dto.DataDto;
+import com.Projekt.RaspberryCloud.dto.mapper.DataMapper;
 import com.Projekt.RaspberryCloud.model.Data;
 import com.Projekt.RaspberryCloud.repository.DataRepository;
 
@@ -55,6 +57,22 @@ public class DataService {
         }
 
         return "Datei gespeichert";
+    }
+
+    public DataDto downloadData(Integer id, String path) {
+        // TODO die Datei wird gerade über die ID aus der Datenbank gesucht
+        // Der User kennt die ID nicht => neuen Weg implementieren um die Downloaddatei
+        // aus der Datenbank zu finden
+        Data data = dataRepository.findById(id).orElseThrow(() -> new RuntimeException("Datei nicht in der Datenbank"));
+        DataDto dataDto = DataMapper.entityToDto(data);
+
+        Path filePath = Paths.get(path, dataDto.getName());
+        try {
+            Files.write(filePath, dataDto.getBytes());
+        } catch (Exception e) {
+            System.out.println("Datei konnte nicht beschrieben werden");
+        }
+        return dataDto;
     }
 
 }
