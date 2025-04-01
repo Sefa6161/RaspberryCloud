@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,15 +21,6 @@ public class DataService {
     @Autowired
     public DataService(DataRepository dataRepository) {
         this.dataRepository = dataRepository;
-    }
-
-    public List<Data> showTable() {
-        List<Data> dataList = dataRepository.findAll();
-        return dataList;
-    }
-
-    public List<Data> getDataByDatatype(String datatype) {
-        return dataRepository.findByDatatype(datatype);
     }
 
     // ToDO: Es wird nicht gegengecheckt ob die Hochzuladende Datei bereits
