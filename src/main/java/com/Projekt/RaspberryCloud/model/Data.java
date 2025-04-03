@@ -1,7 +1,5 @@
 package com.Projekt.RaspberryCloud.model;
 
-import java.io.File;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,6 +21,8 @@ public class Data {
     private String path;
     private String datatype;
     private int downloadCounter;
+    private int creationTime; // it will be not int
+    private int lastModifiedTime; // it will be not int
     private String uploadUser;
 
     // Constructor
@@ -40,6 +40,10 @@ public class Data {
         this.name = name;
         this.path = path;
         this.datatype = datatype;
+    }
+
+    public void incrementDownloadCounter() {
+        ++downloadCounter;
     }
 
 }

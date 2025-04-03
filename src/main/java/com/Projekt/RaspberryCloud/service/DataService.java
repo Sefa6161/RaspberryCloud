@@ -24,7 +24,7 @@ public class DataService {
     }
 
     // ToDO: Es wird nicht gegengecheckt ob die Hochzuladende Datei bereits
-    // existiert
+    // existiert und ob letzte Änderungsdatum neuer ist als die vom abgelegter datei
     public String upload(MultipartFile file, String path) {
         Data newData;
         try {
@@ -36,8 +36,7 @@ public class DataService {
 
             filePath = Paths.get(path, file.getOriginalFilename());
             Files.write(filePath, file.getBytes());
-            newData = new Data(null,
-                    file.getContentType(),
+            newData = new Data(file.getContentType(),
                     file.getOriginalFilename(),
                     filePath.getParent().toString());
 
@@ -56,9 +55,29 @@ public class DataService {
         Data data = dataRepository.findById(id).orElseThrow(() -> new RuntimeException("Datei nicht in der Datenbank"));
         DataDto dataDto = DataMapper.entityToDto(data);
 
+        // check ob die Datei bereits existiert
+        // TODO checken ob lastModified Tag der Datei älter ist => Dann downloaden
+        try {
+            Path filePath = Paths.get(path);
+            File file = new File(path, data.getName());
+            System.out.println("Path beim Download: " + file.getAbsolutePath());
+            System.out.println("Filename: " + data.getName());
+
+            if (file.exists() && !file.isDirectory()) {
+                System.out.println("Datei existiert");
+                return null;
+            }
+
+        } catch (Exception e) {
+            System.out.println("Fehler beim checken der Datei");
+        }
+
+        // Datei abspeichern in download Ordner und counter hochzählen
         Path filePath = Paths.get(path, dataDto.getName());
         try {
             Files.write(filePath, dataDto.getBytes());
+            data.incrementDownloadCounter();
+            dataRepository.save(data);
         } catch (Exception e) {
             System.out.println("Datei konnte nicht beschrieben werden");
         }
