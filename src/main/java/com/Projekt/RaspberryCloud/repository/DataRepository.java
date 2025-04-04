@@ -12,4 +12,6 @@ public interface DataRepository extends JpaRepository<Data, Integer> {
 
     List<Data> findByDatatype(String datatype);
 
+    Data findByName(String name);
+
 }

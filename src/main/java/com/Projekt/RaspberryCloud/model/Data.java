@@ -1,5 +1,7 @@
 package com.Projekt.RaspberryCloud.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,25 +23,30 @@ public class Data {
     private String path;
     private String datatype;
     private int downloadCounter;
-    private int creationTime; // it will be not int
-    private int lastModifiedTime; // it will be not int
+    private LocalDateTime creationTime;
+    private LocalDateTime lastModifiedTime;
     private String uploadUser;
 
     // Constructor
     public Data() {
     }
 
-    public Data(Integer id, String datatype, String name, String path) {
+    public Data(Integer id, String datatype, String name, String path, LocalDateTime lastModified,
+            LocalDateTime creationTime) {
         this.id = id;
         this.name = name;
         this.path = path;
         this.datatype = datatype;
+        this.lastModifiedTime = lastModified;
+        this.creationTime = creationTime;
     }
 
-    public Data(String datatype, String name, String path) {
+    public Data(String datatype, String name, String path, LocalDateTime lastModified, LocalDateTime creationTime) {
         this.name = name;
         this.path = path;
         this.datatype = datatype;
+        this.lastModifiedTime = lastModified;
+        this.creationTime = creationTime;
     }
 
     public void incrementDownloadCounter() {

@@ -1,6 +1,9 @@
 package com.Projekt.RaspberryCloud.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,8 +31,10 @@ public class DataController {
     }
 
     @PostMapping("/upload")
-    public String upload(@RequestPart("file") MultipartFile file, @RequestParam String path) {
-        return dataService.upload(file, path);
+    public String upload(@RequestPart("file") MultipartFile file, @RequestParam String path,
+            @RequestParam("lastModified") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime lastModified,
+            @RequestParam("creationTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime creationTime) {
+        return dataService.upload(file, path, lastModified, creationTime);
     }
 
     @GetMapping("/download")

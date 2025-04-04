@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,22 +24,32 @@ public class DataService {
         this.dataRepository = dataRepository;
     }
 
-    // ToDO: Es wird nicht gegengecheckt ob die Hochzuladende Datei bereits
-    // existiert und ob letzte Änderungsdatum neuer ist als die vom abgelegter datei
-    public String upload(MultipartFile file, String path) {
+    public String upload(MultipartFile file, String path, LocalDateTime lastModified, LocalDateTime creationTime) {
         Data newData;
+        Path filePath = Paths.get(path);
         try {
-            Path filePath = Paths.get(path);
+
             if (!Files.exists(filePath)) {
                 File folder = new File(filePath.toString());
                 folder.mkdirs();
             }
-
             filePath = Paths.get(path, file.getOriginalFilename());
+
+            // checken ob die Datei existiert und ob lastModified der Datei älter ist
+            if (Files.exists(filePath)) {
+                Data existingData = dataRepository.findById(1).get();
+                if (existingData.getLastModifiedTime().isAfter(lastModified)
+                        || existingData.getLastModifiedTime().isEqual(lastModified)) {
+                    return "Datei existiert bereits und ist aktuell";
+                }
+            }
+
             Files.write(filePath, file.getBytes());
             newData = new Data(file.getContentType(),
                     file.getOriginalFilename(),
-                    filePath.getParent().toString());
+                    filePath.getParent().toString(),
+                    lastModified,
+                    creationTime);
 
             dataRepository.save(newData);
         } catch (Exception e) {
@@ -58,7 +69,6 @@ public class DataService {
         // check ob die Datei bereits existiert
         // TODO checken ob lastModified Tag der Datei älter ist => Dann downloaden
         try {
-            Path filePath = Paths.get(path);
             File file = new File(path, data.getName());
             System.out.println("Path beim Download: " + file.getAbsolutePath());
             System.out.println("Filename: " + data.getName());
