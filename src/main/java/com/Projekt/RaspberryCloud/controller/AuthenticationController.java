@@ -21,7 +21,7 @@ public class AuthenticationController {
         this.jwtService = jwtService;
     }
 
-    @PostMapping("/api/login")
+    @PostMapping("/api/mobile/login")
     public ResponseEntity<LoginResponseDto> authenticate(@RequestBody LoginUserDto loginUserDto) {
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
 

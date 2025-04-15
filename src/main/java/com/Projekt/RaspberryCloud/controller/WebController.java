@@ -9,8 +9,10 @@ import com.Projekt.RaspberryCloud.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
+@RequestMapping("/api/web")
 public class WebController {
 
     private final UserService userService;
@@ -19,7 +21,7 @@ public class WebController {
         this.userService = userService;
     }
 
-    @PostMapping("/api/signup")
+    @PostMapping("/signup")
     public ResponseEntity<?> register(@RequestBody RegisterUserDto registerUserDto) {
         User registerdUser = userService.signup(registerUserDto);
         return ResponseEntity.ok(registerdUser);

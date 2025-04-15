@@ -1,0 +1,23 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login</h1>
+
+    <!-- Hinweis wenn Logout erfolgreich -->
+    <p th:if="${param.logout}">Du hast dich erfolgreich ausgeloggt.</p>
+
+    <!-- Hinweis wenn Login fehlgeschlagen -->
+    <p th:if="${param.error}">Login fehlgeschlagen. Bitte versuche es erneut.</p>
+
+    <form method="post" action="/login">
+        <input type="text" name="username" placeholder="Benutzername" />
+        <input type="password" name="password" placeholder="Passwort" />
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>
