@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +18,6 @@ import com.Projekt.RaspberryCloud.repository.DataRepository;
 public class DataService {
     private final DataRepository dataRepository;
 
-    @Autowired
     public DataService(DataRepository dataRepository) {
         this.dataRepository = dataRepository;
     }
