@@ -1,5 +1,7 @@
 package com.Projekt.RaspberryCloud.service;
 
+import java.io.File;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,11 @@ public class UserService {
         user.setEmail(registerUserDto.getEmail());
         user.setPassword(passwordEncoder.encode(registerUserDto.getPassword()));
         user.setAdminFlag(registerUserDto.isAdminFlag());
+
+        // create new directory for User
+        String absolutePath = System.getProperty("user.home") + "/RaspberryCloud/Users/" + user.getUsername();
+        File dir = new File(absolutePath);
+        dir.mkdirs();
 
         return userRepository.save(user);
     }
