@@ -26,7 +26,7 @@ public class AuthenticationConfig {
 
     @Bean
     UserDetailsService userDetailsService() {
-        return username -> userRepository.findByUsername(username)
+        return username -> userRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
     }
 
@@ -39,7 +39,7 @@ public class AuthenticationConfig {
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService());
-        provider.setPasswordEncoder(passwordEncoder()); // Wichtig, damit BCrypt funktioniert
+        provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
 
