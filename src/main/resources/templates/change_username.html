@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Change username</title>
+    <link rel="stylesheet" th:href="@{/style.css}" />
+</head>
+<body>
+    <h1>Change username</h1>
+
+    <form method="post" action="/change_username">
+        <input type="text" name="newUsername" placeholder="Neuer Username"/>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="hidden" name="_method" value="put" />
+        <button type="submit">Username aendern</button>
+    </form>
+
+    <a th:href="@{/login}">Hier zum Login zurück</a>
+
+</body>
+</html>

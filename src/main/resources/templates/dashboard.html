@@ -3,12 +3,21 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Dashboard</title>
+    <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
+
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="button">Logout</button>
+    </form>
+
 <h1>Login erfolgreich!</h1>
 <p>Willkommen auf dem Dashboard.</p>
-<form th:action="@{/logout}" method="post">
-    <button type="submit">Logout</button>
-</form>
+
+<h1>Willkommen, <span th:text="${#authentication.name}">Benutzer</span>!</h1>
+<a th:href="@{/web/user/{username}(username=${#authentication.name})}">Zu deinem Bereich</a>
+<a th:href="@{/change_password}">Passwort aendern?</a>
+<a th:href="@{/change_username}">Username aendern?</a>
+  
 </body>
 </html>

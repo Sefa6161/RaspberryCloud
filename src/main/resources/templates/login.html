@@ -3,6 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Login</title>
+    <link rel="stylesheet" th:href="@{/style.css}" />
 </head>
 <body>
     <h1>Login</h1>
@@ -19,5 +20,8 @@
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <button type="submit">Login</button>
     </form>
+
+    <a th:href="@{/signup}">Registrieren</a>
+
 </body>
 </html>

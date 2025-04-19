@@ -40,11 +40,14 @@ public class SecurityConfiguration {
         @Bean
         @Order(2)
         public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
-                http.securityMatcher("/web/**", "/login", "/logout", "/dashboard", "api/web/**")
+                http.securityMatcher("/web/**", "/login", "/logout",
+                                "/dashboard", "api/web/**",
+                                "/signup", "style.css", "/change_password", "/change_username")
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/web/public/**", "/login", "/logout",
-                                                                "/api/web/signup")
+                                                .requestMatchers("/web/public/**", "/logout",
+                                                                "/api/web/signup", "/style.css", "/signup")
                                                 .permitAll()
+                                                .requestMatchers("/login").anonymous()
                                                 .anyRequest().authenticated())
                                 .formLogin(form -> form
                                                 .loginPage("/login")
