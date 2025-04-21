@@ -37,6 +37,8 @@ public class User implements UserDetails {
 
     private String password;
     private boolean adminFlag;
+    private boolean passwordChangeRequired = false;
+    private boolean usernameChangeRequired = false;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

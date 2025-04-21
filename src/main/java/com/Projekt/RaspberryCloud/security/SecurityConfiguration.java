@@ -1,5 +1,6 @@
 package com.Projekt.RaspberryCloud.security;
 
+import com.Projekt.RaspberryCloud.handler.CustomAuthSuccessHandler;
 import com.Projekt.RaspberryCloud.service.JwtService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,11 +17,14 @@ public class SecurityConfiguration {
 
         private final UserDetailsService userDetailsService;
         private final JwtAuthenticationFilter jwtAuthenticationFilter;
+        private final CustomAuthSuccessHandler customAuthSuccessHandler;
 
         public SecurityConfiguration(UserDetailsService userDetailsService,
-                        JwtAuthenticationFilter jwtAuthenticationFilter, JwtService jwtService) {
+                        JwtAuthenticationFilter jwtAuthenticationFilter, JwtService jwtService,
+                        CustomAuthSuccessHandler customAuthSuccessHandler) {
                 this.userDetailsService = userDetailsService;
                 this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+                this.customAuthSuccessHandler = customAuthSuccessHandler;
         }
 
         @Bean
@@ -51,7 +55,7 @@ public class SecurityConfiguration {
                                                 .anyRequest().authenticated())
                                 .formLogin(form -> form
                                                 .loginPage("/login")
-                                                .defaultSuccessUrl("/dashboard", true)
+                                                .successHandler(customAuthSuccessHandler)
                                                 .failureUrl("/login?error=true")
                                                 .permitAll())
 

@@ -64,7 +64,19 @@ public class UserService {
         }
 
         user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+        user.setPasswordChangeRequired(false);
         userRepository.save(user);
+
+        // Authentication update to the new password
+        Authentication oldAuth = SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetails updated = userDetailsService.loadUserByUsername(user.getUsername());
+        UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
+                updated,
+                oldAuth.getCredentials(),
+                updated.getAuthorities());
+        newAuth.setDetails(oldAuth.getDetails());
+        SecurityContextHolder.getContext().setAuthentication(newAuth);
     }
 
     public void changeUsername(
@@ -89,6 +101,7 @@ public class UserService {
         // TODO: Dateien in der Datenbank umschreiben auf den neuen username
 
         user.setUsername(changeUsernameDto.getNewUsername());
+        user.setUsernameChangeRequired(false);
         userRepository.save(user);
 
         // Authentication update to the new username
