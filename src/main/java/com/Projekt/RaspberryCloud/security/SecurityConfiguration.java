@@ -46,10 +46,12 @@ public class SecurityConfiguration {
         public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
                 http.securityMatcher("/web/**", "/login", "/logout",
                                 "/dashboard", "api/web/**",
-                                "/signup", "style.css", "/change_password", "/change_username")
+                                "/signup", "style.css", "/change_password", "/change_username", "/files/**",
+                                "/web/user/**")
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/web/public/**", "/logout",
-                                                                "/api/web/signup", "/style.css", "/signup")
+                                                                "/api/web/signup", "/style.css", "/signup",
+                                                                "/webjars/**", "/js/**", "/css/**")
                                                 .permitAll()
                                                 .requestMatchers("/login").anonymous()
                                                 .anyRequest().authenticated())
@@ -70,17 +72,18 @@ public class SecurityConfiguration {
                 return http.build();
         }
 
-        @Bean
-        @Order(3)
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // @Bean
+        // @Order(3)
+        // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
+        // Exception {
 
-                // Alle Endpunkte absichern für authentifizierte User
-                http.csrf(csrf -> csrf.disable())
-                                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-                                .userDetailsService(userDetailsService);
+        // // Alle Endpunkte absichern für authentifizierte User
+        // http.csrf(csrf -> csrf.disable())
+        // .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+        // .userDetailsService(userDetailsService);
 
-                return http.build();
-        }
+        // return http.build();
+        // }
 
         // @Bean
         // @Order(4)

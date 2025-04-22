@@ -15,9 +15,12 @@
 <p>Willkommen auf dem Dashboard.</p>
 
 <h1>Willkommen, <span th:text="${#authentication.name}">Benutzer</span>!</h1>
-<a th:href="@{/web/user/{username}(username=${#authentication.name})}">Zu deinem Bereich</a>
+<a th:href="@{/files/{username}(username=${#authentication.name})}">
+    Zu deinem Bereich
+  </a>
 <a th:href="@{/change_password}">Passwort aendern?</a>
 <a th:href="@{/change_username}">Username aendern?</a>
+<a th:href="@{/files/{username}}">Meine Dateien</a>
   
 </body>
 </html>

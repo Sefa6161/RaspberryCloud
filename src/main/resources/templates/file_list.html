@@ -1,0 +1,45 @@
+<!-- file_list.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="${username} + '‘s Dateien'">Dateiliste</title>
+  <link rel="stylesheet" th:href="@{/style.css}" />
+</head>
+<body>
+  <h1 th:text="${username} + '‘s Dateien'">Dateiliste</h1>
+
+  <!-- Upload‑Formular -->
+  <form th:action="@{/web/user/{username}/upload(username=${username})}"
+      method="post" enctype="multipart/form-data">
+    <input type="hidden" th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}" />
+    <input type="file" name="file" required />
+    <button type="submit">Hochladen</button>
+</form>
+
+  <hr/>
+
+  <!-- bestehende Liste -->
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Typ</th>
+        <th>Hochgeladen am</th>
+        <th>Downloads</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="file : ${entries}">
+        <td th:text="${file.name}">Dateiname</td>
+        <td th:text="${file.datatype}">Type</td>
+        <td th:text="${#temporals.format(file.creationTime, 'dd.MM.yyyy HH:mm')}">Zeit</td>
+        <td th:text="${file.downloadCounter}">0</td>
+      </tr>
+    </tbody>
+  </table>
+  <p th:if="${message}" th:text="${message}" class="success"></p>
+
+  <a th:href="@{/dashboard}">Zurück zum Dashboard</a>
+</body>
+</html>

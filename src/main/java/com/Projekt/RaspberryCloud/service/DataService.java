@@ -1,6 +1,7 @@
 package com.Projekt.RaspberryCloud.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -8,53 +9,42 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.Projekt.RaspberryCloud.dto.DataDto;
 import com.Projekt.RaspberryCloud.dto.mapper.DataMapper;
 import com.Projekt.RaspberryCloud.model.Data;
 import com.Projekt.RaspberryCloud.repository.DataRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class DataService {
     private final DataRepository dataRepository;
+    private final Path baseDir = Paths.get(System.getProperty("user.home"),
+            "RaspberryCloud", "Users");
 
     public DataService(DataRepository dataRepository) {
         this.dataRepository = dataRepository;
     }
 
-    public String upload(MultipartFile file, String path, LocalDateTime lastModified, LocalDateTime creationTime) {
-        Data newData;
-        Path filePath = Paths.get(path);
-        try {
+    @Transactional
+    public String uploadData(String username, MultipartFile file) throws IOException {
 
-            if (!Files.exists(filePath)) {
-                File folder = new File(filePath.toString());
-                folder.mkdirs();
-            }
-            filePath = Paths.get(path, file.getOriginalFilename());
+        Path userDir = baseDir.resolve(username);
 
-            // checken ob die Datei existiert und ob lastModified der Datei älter ist
-            if (Files.exists(filePath)) {
-                Data existingData = dataRepository.findById(1).get();
-                if (existingData.getLastModifiedTime().isAfter(lastModified)
-                        || existingData.getLastModifiedTime().isEqual(lastModified)) {
-                    return "Datei existiert bereits und ist aktuell";
-                }
-            }
+        Path target = userDir.resolve(file.getOriginalFilename());
+        Files.write(target, file.getBytes());
 
-            Files.write(filePath, file.getBytes());
-            newData = new Data(file.getContentType(),
-                    file.getOriginalFilename(),
-                    filePath.getParent().toString(),
-                    lastModified,
-                    creationTime);
-
-            dataRepository.save(newData);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return "Datei gespeichert";
+        Data meta = new Data();
+        meta.setName(file.getOriginalFilename());
+        meta.setPath(target.toString());
+        meta.setDatatype(file.getContentType());
+        meta.setCreationTime(LocalDateTime.now());
+        meta.setLastModifiedTime(LocalDateTime.now());
+        meta.setUploadUser(username);
+        dataRepository.save(meta);
+        return "/files" + username;
     }
 
     public DataDto downloadData(Integer id, String path) {
