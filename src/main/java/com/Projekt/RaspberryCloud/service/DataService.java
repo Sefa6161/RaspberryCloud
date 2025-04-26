@@ -6,16 +6,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.Projekt.RaspberryCloud.dto.DataDto;
 import com.Projekt.RaspberryCloud.dto.mapper.DataMapper;
 import com.Projekt.RaspberryCloud.model.Data;
 import com.Projekt.RaspberryCloud.repository.DataRepository;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -32,13 +33,17 @@ public class DataService {
     public String uploadData(String username, MultipartFile file) throws IOException {
 
         Path userDir = baseDir.resolve(username);
-
         Path target = userDir.resolve(file.getOriginalFilename());
+
+        if (dataRepository.findByName(file.getOriginalFilename()).isPresent()) {
+            throw new EntityExistsException("Datei bereits hochgeladen");
+        }
         Files.write(target, file.getBytes());
 
         Data meta = new Data();
         meta.setName(file.getOriginalFilename());
-        meta.setPath(target.toString());
+        meta.setPath(userDir.toString());
+        meta.setAbsolutePath(target.toString());
         meta.setDatatype(file.getContentType());
         meta.setCreationTime(LocalDateTime.now());
         meta.setLastModifiedTime(LocalDateTime.now());
@@ -80,6 +85,29 @@ public class DataService {
             System.out.println("Datei konnte nicht beschrieben werden");
         }
         return dataDto;
+    }
+
+    public int deleteData(String username, List<String> filenames) {
+
+        Path userDir = baseDir.resolve(username);
+        int deletedCounter = 0;
+
+        for (String filename : filenames) {
+            try {
+                Path fileToDelete = userDir.resolve(filename).normalize();
+                if (Files.deleteIfExists(fileToDelete)) {
+                    Data data = dataRepository.findByName(filename).get();
+                    dataRepository.delete(data);
+                    deletedCounter++;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        System.out.println("Löschen erfolgreich: " + filenames.getFirst());
+        return deletedCounter;
+
     }
 
 }

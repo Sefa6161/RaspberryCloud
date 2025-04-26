@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,7 +19,9 @@ import org.springframework.stereotype.Service;
 import com.Projekt.RaspberryCloud.dto.ChangePasswordDto;
 import com.Projekt.RaspberryCloud.dto.ChangeUsernameDto;
 import com.Projekt.RaspberryCloud.dto.request.RegisterUserDto;
+import com.Projekt.RaspberryCloud.model.Data;
 import com.Projekt.RaspberryCloud.model.User;
+import com.Projekt.RaspberryCloud.repository.DataRepository;
 import com.Projekt.RaspberryCloud.repository.UserRepository;
 
 @Service
@@ -26,11 +29,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final UserDetailsService userDetailsService;
+    private final DataRepository dataRepository;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-            UserDetailsService userDetailsService) {
+            UserDetailsService userDetailsService,
+            DataRepository dataRepository) {
         this.userRepository = userRepository;
         this.userDetailsService = userDetailsService;
+        this.dataRepository = dataRepository;
     }
 
     public User signup(RegisterUserDto registerUserDto) {
@@ -98,7 +104,12 @@ public class UserService {
         } catch (Exception e) {
             throw new RuntimeException("Fehler beim Umbenennen des Benutzerordners", e);
         }
-        // TODO: Dateien in der Datenbank umschreiben auf den neuen username
+
+        // Override "uploadedBy" flag of Data to the new username
+        List<Data> userFiles = dataRepository.findByUploadUser(user.getUsername());
+        for (Data data : userFiles) {
+            data.setUploadUser(changeUsernameDto.getNewUsername());
+        }
 
         user.setUsername(changeUsernameDto.getNewUsername());
         user.setUsernameChangeRequired(false);

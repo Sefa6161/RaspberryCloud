@@ -2,6 +2,7 @@ package com.Projekt.RaspberryCloud.controller;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +59,23 @@ public class DataController {
             @RequestParam String path,
             @PathVariable String username) {
         return dataService.downloadData(id, path);
+    }
+
+    @PostMapping("/delete")
+    public String deleteData(@PathVariable String username,
+            @RequestParam List<String> filenames,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) throws AccessDeniedException {
+
+        if (!AccessValidator.canAccess(username, authentication)) {
+            throw new AccessDeniedException("Zugriff verweigert");
+        }
+
+        int deletedData = dataService.deleteData(username, filenames);
+
+        redirectAttributes.addFlashAttribute("message", deletedData);
+
+        return "redirect:/files/" + username;
     }
 
     @GetMapping("/files")

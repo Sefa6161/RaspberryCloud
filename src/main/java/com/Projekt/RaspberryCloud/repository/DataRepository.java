@@ -1,6 +1,7 @@
 package com.Projekt.RaspberryCloud.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,7 @@ public interface DataRepository extends JpaRepository<Data, Integer> {
 
     List<Data> findByDatatype(String datatype);
 
-    Data findByName(String name);
+    Optional<Data> findByName(String name);
 
     List<Data> findByUploadUser(String uploadUser);
 

@@ -2,6 +2,7 @@ package com.Projekt.RaspberryCloud.model;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,6 +27,9 @@ public class Data {
     private LocalDateTime creationTime;
     private LocalDateTime lastModifiedTime;
     private String uploadUser;
+
+    @Column(unique = true)
+    private String absolutePath;
 
     // Constructor
     public Data() {
