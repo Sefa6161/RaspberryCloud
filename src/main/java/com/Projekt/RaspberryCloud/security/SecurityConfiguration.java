@@ -51,7 +51,7 @@ public class SecurityConfiguration {
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/web/public/**", "/logout",
                                                                 "/api/web/signup", "/style.css", "/signup",
-                                                                "/webjars/**", "/js/**", "/css/**")
+                                                                "/webjars/**", "/js/**", "/css/**", "/change_password")
                                                 .permitAll()
                                                 .requestMatchers("/login").anonymous()
                                                 .anyRequest().authenticated())

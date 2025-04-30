@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title th:text="${title} ?: 'NAS-Server'">NAS-Server</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+  </head>
+  <body class="bg-gray-100 flex justify-center">
+    <div class="w-full max-w-sm mt-20">
+      <div th:replace="~{::body}"></div>
+    </div>
+  </body>
+</html>

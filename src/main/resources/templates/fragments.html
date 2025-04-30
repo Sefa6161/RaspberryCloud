@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <div th:fragment="formInput(label, type, name)">
+      <div class="relative mb-6">
+        <input
+          th:attr="type=${type}, name=${name}, id=${name}, placeholder=' '"
+          class="peer w-full border-0 border-b-2 border-gray-300 bg-transparent focus:outline-none focus:border-blue-500 p-2"
+        />
+        <label
+          th:attr="for=${name}"
+          th:text="${label}"
+          class="absolute left-2 top-2 text-gray-400 text-sm transition-all peer-focus:text-blue-600 peer-focus:text-base peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm"
+        ></label>
+      </div>
+    </div>
+  </body>
+</html>

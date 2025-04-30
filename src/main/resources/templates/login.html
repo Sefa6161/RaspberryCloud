@@ -1,27 +1,54 @@
-<!-- login.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <title>Login</title>
-    <link rel="stylesheet" th:href="@{/style.css}" />
-</head>
-<body>
-    <h1>Login</h1>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-300 flex justify-center pt-24">
+    <div class="bg-gray-200 p-8 rounded-2xl shadow-md w-full max-w-sm">
+      <h1 class="text-2xl font-bold mb-4 text-center">Login</h1>
 
-    <!-- Hinweis wenn Logout erfolgreich -->
-    <p th:if="${param.logout}">Du hast dich erfolgreich ausgeloggt.</p>
+      <p th:if="${param.logout}" class="text-green-600 mb-2">
+        Du hast dich erfolgreich ausgeloggt.
+      </p>
+      <p th:if="${param.error}" class="text-red-600 mb-2">
+        Login fehlgeschlagen. Bitte versuche es erneut.
+      </p>
 
-    <!-- Hinweis wenn Login fehlgeschlagen -->
-    <p th:if="${param.error}">Login fehlgeschlagen. Bitte versuche es erneut.</p>
+      <form method="post" action="/login" class="flex flex-col gap-4">
+        <input
+          type="text"
+          name="username"
+          placeholder="Benutzername"
+          class="bg-gray-200 w-full border-0 border-b-2 border-gray-400 focus:outline-none focus:border-blue-500 transition-colors duration-200"
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Passwort"
+          class="bg-gray-200 w-full border-0 border-b-2 border-gray-400 focus:outline-none focus:border-blue-500 transition-colors duration-200"
+        />
+        <input
+          type="hidden"
+          th:name="${_csrf.parameterName}"
+          th:value="${_csrf.token}"
+        />
+        <button
+          type="submit"
+          class="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        >
+          Login
+        </button>
+      </form>
 
-    <form method="post" action="/login">
-        <input type="text" name="username" placeholder="Benutzername" />
-        <input type="password" name="password" placeholder="Passwort" />
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-        <button type="submit">Login</button>
-    </form>
-
-    <a th:href="@{/signup}">Registrieren</a>
-
-</body>
+      <div class="mt-2 text-center flex flex-col">
+        <a th:href="@{/signup}" class="text-blue-600 hover:underline"
+          >Registrieren</a
+        >
+        <a th:href="@{/change_password}" class="text-gray-400 hover:underline"
+          >Passwort vergessen (not implemented)
+        </a>
+      </div>
+    </div>
+  </body>
 </html>
