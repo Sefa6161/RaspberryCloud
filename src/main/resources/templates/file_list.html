@@ -86,8 +86,9 @@
             th:value="${_csrf.token}"
           />
           <input type="hidden" name="currentPath" th:value="${currentPath}" />
+          <!-- HIDDEN INPUT that carries the full JSON -->
+          <input type="hidden" name="selectedItems" id="selectedItemsInput" />
 
-          <!-- Toolbar -->
           <div
             class="border border-gray-300 flex items-center justify-between mb-4 bg-white p-4 rounded shadow-md"
           >
@@ -104,7 +105,6 @@
               >
                 Hochladen
               </button>
-
               <button
                 id="deleteButton"
                 type="submit"
@@ -113,16 +113,6 @@
               >
                 Löschen
               </button>
-            </div>
-
-            <div class="flex items-center gap-2">
-              <select class="border border-gray-300 rounded p-2 text-gray-700">
-                <option>Sortieren nach...</option>
-                <option>Name (A-Z)</option>
-                <option>Name (Z-A)</option>
-                <option>Datum (Neueste zuerst)</option>
-                <option>Datum (Älteste zuerst)</option>
-              </select>
             </div>
           </div>
 
@@ -133,53 +123,57 @@
               class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal"
             >
               <tr>
-                <th class="border border-gray-300 py-1 px-4 text-left">
-                  <!-- <input type="checkbox" onclick="toggleAll(this)" /> -->
-                </th>
+                <th class="border border-gray-300 px-4 text-left">Auswahl</th>
                 <th class="border border-gray-300 px-4 text-left">Name</th>
-                <th class="border border-gray-300 py-3 px-4 text-left">Typ</th>
-                <th class="border border-gray-300 py-3 px-4 text-left">
+                <th class="border border-gray-300 px-4 text-left">Typ</th>
+                <th class="border border-gray-300 px-4 text-left">
                   Hochgeladen am
                 </th>
-                <th class="border border-gray-300 py-3 px-4 text-left">
-                  Downloads
-                </th>
+                <th class="border border-gray-300 px-4 text-left">Downloads</th>
               </tr>
             </thead>
-            <tbody class="text-gray-700 text-sm divide-y divide-gray-200">
-              <tr th:each="file : ${entries}" class="hover:bg-gray-50">
-                <td class="py-2 px-4">
+            <tbody>
+              <tr th:each="entry : ${entries}" class="hover:bg-gray-50">
+                <td class="border border-gray-300 py-2 px-4">
                   <input
                     type="checkbox"
-                    name="filenames"
-                    th:value="${file.name}"
-                    class="form-checkbox text-blue-500"
+                    name="selectedItemsCheckbox"
+                    th:attr="data-type=${entry.folder ? 'folder' : 'file'}, data-name=${entry.name}"
                   />
                 </td>
-                <td
-                  class="border border-gray-300 py-2 px-4"
-                  th:text="${file.name}"
-                >
-                  Dateiname
+                <td class="border border-gray-300 py-2 px-4">
+                  <span th:if="${entry.folder}">
+                    <a
+                      th:href="@{/files/{username}(username=${username}, path=${currentPath + '/' + entry.name})}"
+                      th:text="${entry.name}"
+                      >Ordner</a
+                    >
+                  </span>
+                  <span th:unless="${entry.folder}" th:text="${entry.name}"
+                    >Datei</span
+                  >
                 </td>
                 <td
+                  th:text="${entry.datatype}"
                   class="border border-gray-300 py-2 px-4"
-                  th:text="${file.datatype}"
                 >
                   Typ
                 </td>
                 <td
+                  th:text="${entry.creationTime != null ? #temporals.format(entry.creationTime, 'dd.MM.yyyy HH:mm') : '-'}"
                   class="border border-gray-300 py-2 px-4"
-                  th:text="${#temporals.format(file.creationTime, 'dd.MM.yyyy HH:mm')}"
                 >
-                  Zeit
+                  -
                 </td>
-                <td class="py-2 px-4" th:text="${file.downloadCounter}">0</td>
+                <td
+                  th:text="${entry.downloadCounter != null ? entry.downloadCounter : '-'}"
+                  class="border border-gray-300 py-2 px-4"
+                >
+                  -
+                </td>
               </tr>
             </tbody>
           </table>
-
-          <!-- <button type="submit">Ausgewählte Dateien löschen</button> -->
         </form>
 
         <!-- Hochladen einer Datei -->
@@ -214,12 +208,25 @@
     <!-- Löschen Button rot setzen wenn checkbox ausgewählt ist -->
     <script>
       function updateDeleteButton() {
-        const checkboxes = document.querySelectorAll('input[name="filenames"]');
-        const deleteButton = document.getElementById("deleteButton");
-
-        const anyChecked = Array.from(checkboxes).some(
-          (checkbox) => checkbox.checked
+        const checkboxes = document.querySelectorAll(
+          'input[name="selectedItemsCheckbox"]'
         );
+        const deleteButton = document.getElementById("deleteButton");
+        const hiddenInput = document.getElementById("selectedItemsInput");
+
+        let selectedItems = [];
+        let anyChecked = false;
+
+        checkboxes.forEach((checkbox) => {
+          if (checkbox.checked) {
+            anyChecked = true;
+            const type = checkbox.getAttribute("data-type");
+            const name = checkbox.getAttribute("data-name");
+            selectedItems.push({ type, name });
+          }
+        });
+
+        hiddenInput.value = JSON.stringify(selectedItems);
 
         if (anyChecked) {
           deleteButton.disabled = false;
@@ -240,14 +247,61 @@
         }
       }
 
-      // Beim Laden & beim Klicken aktualisieren
       document.addEventListener("DOMContentLoaded", function () {
-        const checkboxes = document.querySelectorAll('input[name="filenames"]');
+        const checkboxes = document.querySelectorAll(
+          'input[name="selectedItemsCheckbox"]'
+        );
+        checkboxes.forEach((checkbox) => {
+          checkbox.addEventListener("change", updateDeleteButton);
+        });
+        updateDeleteButton();
+      });
+    </script>
+    <!-- <script>
+      function updateDeleteButton() {
+        const checkboxes = document.querySelectorAll(
+          'input[name="selectedItems"]'
+        );
+        const deleteButton = document.getElementById("deleteButton");
+
+        let anyChecked = false;
+        checkboxes.forEach((checkbox) => {
+          const type = checkbox.getAttribute("data-type");
+          const name = checkbox.getAttribute("data-name");
+          checkbox.value = JSON.stringify({ type, name }); // 💥 hier wird der Wert gesetzt
+          if (checkbox.checked) {
+            anyChecked = true;
+          }
+        });
+
+        if (anyChecked) {
+          deleteButton.disabled = false;
+          deleteButton.classList.remove("bg-gray-400", "cursor-not-allowed");
+          deleteButton.classList.add(
+            "bg-red-600",
+            "hover:bg-red-700",
+            "cursor-pointer"
+          );
+        } else {
+          deleteButton.disabled = true;
+          deleteButton.classList.remove(
+            "bg-red-600",
+            "hover:bg-red-700",
+            "cursor-pointer"
+          );
+          deleteButton.classList.add("bg-gray-400", "cursor-not-allowed");
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const checkboxes = document.querySelectorAll(
+          'input[name="selectedItems"]'
+        );
         checkboxes.forEach((checkbox) => {
           checkbox.addEventListener("change", updateDeleteButton);
         });
         updateDeleteButton(); // initialer Check
       });
-    </script>
+    </script> -->
   </body>
 </html>

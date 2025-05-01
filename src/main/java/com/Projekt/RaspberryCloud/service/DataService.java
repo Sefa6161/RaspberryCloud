@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.Projekt.RaspberryCloud.dto.DataDto;
+import com.Projekt.RaspberryCloud.dto.DeleteFileDto;
 import com.Projekt.RaspberryCloud.dto.mapper.DataMapper;
 import com.Projekt.RaspberryCloud.model.Data;
 import com.Projekt.RaspberryCloud.repository.DataRepository;
@@ -36,7 +37,7 @@ public class DataService {
         Path target = userDir.resolve(file.getOriginalFilename());
 
         if (dataRepository.findByName(file.getOriginalFilename()).isPresent()) {
-            throw new EntityExistsException("Datei bereits hochgeladen");
+            throw new EntityExistsException("File already uploaded");
         }
         Files.write(target, file.getBytes());
 
@@ -87,15 +88,16 @@ public class DataService {
         return dataDto;
     }
 
-    public int deleteData(String username, List<String> filenames) {
+    public int deleteData(String username, List<DeleteFileDto> filesToDelete) {
 
         Path userDir = baseDir.resolve(username);
         int deletedCounter = 0;
 
-        for (String filename : filenames) {
+        for (DeleteFileDto fileToDelete : filesToDelete) {
+            String filename = fileToDelete.getFilename();
             try {
-                Path fileToDelete = userDir.resolve(filename).normalize();
-                if (Files.deleteIfExists(fileToDelete)) {
+                Path fileToDeletePath = userDir.resolve(filename).normalize();
+                if (Files.deleteIfExists(fileToDeletePath)) {
                     Data data = dataRepository.findByName(filename).get();
                     dataRepository.delete(data);
                     deletedCounter++;
@@ -105,7 +107,6 @@ public class DataService {
             }
         }
 
-        System.out.println("Löschen erfolgreich: " + filenames.getFirst());
         return deletedCounter;
 
     }

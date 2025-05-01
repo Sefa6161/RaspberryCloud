@@ -9,7 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.Projekt.RaspberryCloud.model.Data;
+import com.Projekt.RaspberryCloud.dto.FileViewDto;
 import com.Projekt.RaspberryCloud.security.AccessValidator;
 import com.Projekt.RaspberryCloud.service.FileService;
 
@@ -26,16 +26,16 @@ public class FileController {
     }
 
     @GetMapping("/{username}")
-    public String loadUserFiles(@PathVariable String username,
+    public String showUserFiles(@PathVariable String username,
             @RequestParam(name = "path", required = false, defaultValue = "") String currentPath,
             Model model,
             Authentication authentication) throws AccessDeniedException {
 
         if (!AccessValidator.canAccess(username, authentication)) {
-            throw new AccessDeniedException("User has no Access");
+            throw new AccessDeniedException("Access Denied");
         }
 
-        List<Data> entries = fileService.listFilesFromDb(username);
+        List<FileViewDto> entries = fileService.getFilesAndFoldersForDisplay(username, currentPath);
         model.addAttribute("entries", entries);
         model.addAttribute("currentPath", currentPath);
         return "file_list";

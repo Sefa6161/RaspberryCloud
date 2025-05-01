@@ -5,9 +5,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 
+import com.Projekt.RaspberryCloud.dto.DeleteFolderDto;
 import com.Projekt.RaspberryCloud.model.Folder;
 import com.Projekt.RaspberryCloud.repository.FolderRepository;
 
@@ -39,8 +41,42 @@ public class FolderService {
 
     }
 
-    public List<Folder> listFoldersFromDb(String currentPath) {
+    public List<Folder> listFoldersInPath(String currentPath) {
         return folderRepository.findByPath(currentPath);
+    }
+
+    public int deleteFolders(String username, List<DeleteFolderDto> foldersToDelete) {
+        int deleteCounter = 0;
+
+        for (DeleteFolderDto folderDto : foldersToDelete) {
+            Path folderPath = baseDir.resolve(username).resolve(folderDto.getFoldername());
+            Folder deleteFolder = folderRepository.findByFoldername(folderDto.getFoldername()).orElseThrow();
+            try {
+                deleteDirectoryRecursively(folderPath);
+                folderRepository.delete(deleteFolder);
+                deleteCounter++;
+
+            } catch (Exception e) {
+                throw new RuntimeException("Cannot delete Folder: " + folderPath, e);
+            }
+        }
+        return deleteCounter;
+    }
+
+    public static void deleteDirectoryRecursively(Path path) throws IOException {
+        if (!Files.exists(path))
+            return;
+
+        try (Stream<Path> entries = Files.walk(path)) {
+            entries.sorted((a, b) -> b.compareTo(a))
+                    .forEach(p -> {
+                        try {
+                            Files.delete(p);
+                        } catch (IOException e) {
+                            throw new RuntimeException("Error while deleting: " + p, e);
+                        }
+                    });
+        }
     }
 
 }

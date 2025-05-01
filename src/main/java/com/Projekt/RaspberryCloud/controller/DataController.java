@@ -2,7 +2,6 @@ package com.Projekt.RaspberryCloud.controller;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
-import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.Projekt.RaspberryCloud.dto.DataDto;
 import com.Projekt.RaspberryCloud.security.AccessValidator;
 import com.Projekt.RaspberryCloud.service.DataService;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,11 +29,6 @@ public class DataController {
         this.dataService = dataService;
     }
 
-    @GetMapping()
-    public String startPage() {
-        return "Start Seite";
-    }
-
     @PostMapping("/upload")
     public String upload(@RequestParam("file") MultipartFile file,
             @PathVariable String username,
@@ -41,7 +36,7 @@ public class DataController {
             RedirectAttributes redirectAttributes) throws AccessDeniedException {
 
         if (!AccessValidator.canAccess(username, authentication)) {
-            throw new AccessDeniedException("Zugriff verweigert");
+            throw new AccessDeniedException("Access Denied");
         }
 
         try {
@@ -50,7 +45,7 @@ public class DataController {
             e.printStackTrace();
         }
         redirectAttributes.addFlashAttribute("message",
-                "Datei: " + file.getOriginalFilename() + " erfolgreich hochgeladen");
+                "File: " + file.getOriginalFilename() + " successfull uploaded");
         return "redirect:/files/" + username;
     }
 
@@ -61,31 +56,14 @@ public class DataController {
         return dataService.downloadData(id, path);
     }
 
-    @PostMapping("/delete")
-    public String deleteData(@PathVariable String username,
-            @RequestParam List<String> filenames,
-            Authentication authentication,
-            RedirectAttributes redirectAttributes) throws AccessDeniedException {
-
-        if (!AccessValidator.canAccess(username, authentication)) {
-            throw new AccessDeniedException("Zugriff verweigert");
-        }
-
-        int deletedData = dataService.deleteData(username, filenames);
-
-        redirectAttributes.addFlashAttribute("message", deletedData);
-
-        return "redirect:/files/" + username;
-    }
-
     @GetMapping("/files")
     public ResponseEntity<?> getUserFiles(@PathVariable String username, Authentication authentication) {
 
         if (!AccessValidator.canAccess(username, authentication)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Zugriff verweigert.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
         }
 
-        return ResponseEntity.ok("Hier sind deine Dateien");
+        return ResponseEntity.ok("Here are your files");
     }
 
 }
