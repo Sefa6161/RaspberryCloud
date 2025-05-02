@@ -60,7 +60,7 @@ public class FileService {
         // display files
         List<Data> userFiles = dataRepository.findByUploadUser(username);
         for (Data file : userFiles) {
-            if (file.getPath().endsWith(currentPath)) {
+            if (PathUtils.normalize(file.getPath()).equals(PathUtils.normalize(currentPath))) {
                 entries.add(new FileViewDto(
                         file.getName(),
                         file.getDatatype(),

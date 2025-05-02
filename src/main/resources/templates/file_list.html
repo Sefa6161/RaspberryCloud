@@ -144,7 +144,7 @@
                 <td class="border border-gray-300 py-2 px-4">
                   <span th:if="${entry.folder}">
                     <a
-                      th:href="@{/files/{username}(username=${username}, path=${currentPath + '/' + entry.name})}"
+                      th:href="@{/files/{username}(username=${username}, path=${currentPath != '' ? currentPath + '/' + entry.name : entry.name})}"
                       th:text="${entry.name}"
                       >Ordner</a
                     >

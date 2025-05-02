@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.Projekt.RaspberryCloud.dto.DataDto;
 import com.Projekt.RaspberryCloud.service.DataService;
 import com.Projekt.RaspberryCloud.util.AccessValidator;
+import com.Projekt.RaspberryCloud.util.PathUtils;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +33,7 @@ public class DataController {
     @PostMapping("/upload")
     public String upload(@RequestParam("file") MultipartFile file,
             @PathVariable String username,
+            @RequestParam String currentPath,
             Authentication authentication,
             RedirectAttributes redirectAttributes) throws AccessDeniedException {
 
@@ -40,7 +42,8 @@ public class DataController {
         }
 
         try {
-            dataService.uploadData(username, file);
+            currentPath = PathUtils.normalize(currentPath);
+            dataService.uploadData(username, file, currentPath);
         } catch (IOException e) {
             e.printStackTrace();
         }

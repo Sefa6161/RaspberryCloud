@@ -16,6 +16,7 @@ import com.Projekt.RaspberryCloud.dto.DeleteFileDto;
 import com.Projekt.RaspberryCloud.dto.mapper.DataMapper;
 import com.Projekt.RaspberryCloud.model.Data;
 import com.Projekt.RaspberryCloud.repository.DataRepository;
+import com.Projekt.RaspberryCloud.util.PathUtils;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.transaction.Transactional;
@@ -31,10 +32,10 @@ public class DataService {
     }
 
     @Transactional
-    public String uploadData(String username, MultipartFile file) throws IOException {
+    public String uploadData(String username, MultipartFile file, String currentPath) throws IOException {
 
         Path userDir = baseDir.resolve(username);
-        Path target = userDir.resolve(file.getOriginalFilename());
+        Path target = userDir.resolve(currentPath).resolve(file.getOriginalFilename());
 
         if (dataRepository.findByName(file.getOriginalFilename()).isPresent()) {
             throw new EntityExistsException("File already uploaded");
@@ -43,7 +44,7 @@ public class DataService {
 
         Data meta = new Data();
         meta.setName(file.getOriginalFilename());
-        meta.setPath(userDir.toString());
+        meta.setPath(PathUtils.normalize(currentPath));
         meta.setAbsolutePath(target.toString());
         meta.setDatatype(file.getContentType());
         meta.setCreationTime(LocalDateTime.now());
@@ -96,7 +97,10 @@ public class DataService {
         for (DeleteFileDto fileToDelete : filesToDelete) {
             String filename = fileToDelete.getFilename();
             try {
-                Path fileToDeletePath = userDir.resolve(filename).normalize();
+                Path fileToDeletePath = userDir
+                        .resolve(PathUtils.normalize(fileToDelete.getPath()))
+                        .resolve(filename)
+                        .normalize();
                 if (Files.deleteIfExists(fileToDeletePath)) {
                     Data data = dataRepository.findByName(filename).get();
                     dataRepository.delete(data);
