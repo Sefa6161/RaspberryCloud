@@ -11,8 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.Projekt.RaspberryCloud.dto.DataDto;
-import com.Projekt.RaspberryCloud.security.AccessValidator;
 import com.Projekt.RaspberryCloud.service.DataService;
+import com.Projekt.RaspberryCloud.util.AccessValidator;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

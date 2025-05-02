@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.Projekt.RaspberryCloud.dto.FileViewDto;
-import com.Projekt.RaspberryCloud.security.AccessValidator;
 import com.Projekt.RaspberryCloud.service.FileService;
+import com.Projekt.RaspberryCloud.util.AccessValidator;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import com.Projekt.RaspberryCloud.repository.FolderRepository;
+import com.Projekt.RaspberryCloud.util.PathUtils;
+
 import org.springframework.stereotype.Service;
 
 import com.Projekt.RaspberryCloud.dto.FileViewDto;
@@ -20,10 +22,10 @@ import com.Projekt.RaspberryCloud.repository.DataRepository;
 public class FileService {
 
     private final FolderRepository folderRepository;
+    private final DataRepository dataRepository;
 
     private final Path baseDir = Paths.get(System.getProperty("user.home"),
             "RaspberryCloud", "Users");
-    private final DataRepository dataRepository;
 
     public FileService(DataRepository dataRepository, FolderRepository folderRepository) {
         this.dataRepository = dataRepository;
@@ -55,15 +57,28 @@ public class FileService {
     public List<FileViewDto> getFilesAndFoldersForDisplay(String username, String currentPath) {
         List<FileViewDto> entries = new ArrayList<>();
 
-        for (Data file : dataRepository.findByUploadUser(username)) {
+        // display files
+        List<Data> userFiles = dataRepository.findByUploadUser(username);
+        for (Data file : userFiles) {
             if (file.getPath().endsWith(currentPath)) {
                 entries.add(new FileViewDto(
-                        file.getName(), file.getDatatype(), file.getCreationTime(), file.getDownloadCounter(), false));
+                        file.getName(),
+                        file.getDatatype(),
+                        file.getCreationTime(),
+                        file.getDownloadCounter(),
+                        false));
             }
         }
 
-        for (Folder folder : folderRepository.findByPath(currentPath)) {
-            entries.add(new FileViewDto(folder.getFoldername(), "Folder", null, 0, true));
+        // display folders
+        String normalizedPath = PathUtils.normalize(currentPath);
+        List<Folder> folders = folderRepository.findByPath(normalizedPath);
+        for (Folder folder : folders) {
+            entries.add(new FileViewDto(folder.getFoldername(),
+                    "Folder",
+                    null,
+                    0,
+                    true));
         }
 
         return entries;

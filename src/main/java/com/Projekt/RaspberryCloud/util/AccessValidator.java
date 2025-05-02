@@ -1,4 +1,4 @@
-package com.Projekt.RaspberryCloud.security;
+package com.Projekt.RaspberryCloud.util;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

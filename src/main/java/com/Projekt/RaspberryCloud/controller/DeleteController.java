@@ -11,11 +11,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.Projekt.RaspberryCloud.service.DataService;
 import com.Projekt.RaspberryCloud.service.FolderService;
+import com.Projekt.RaspberryCloud.util.AccessValidator;
+import com.Projekt.RaspberryCloud.util.PathUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.Projekt.RaspberryCloud.dto.DeleteFileDto;
 import com.Projekt.RaspberryCloud.dto.DeleteFolderDto;
-import com.Projekt.RaspberryCloud.security.AccessValidator;
 
 @Controller
 @RequestMapping("/web/user/{username}")
@@ -44,34 +45,36 @@ public class DeleteController {
 
         List<DeleteFileDto> filesToDelete = new ArrayList<>();
         List<DeleteFolderDto> foldersToDelete = new ArrayList<>();
-
         try {
             JsonNode arrayNode = objectMapper.readTree(selectedItemsJson);
 
             if (arrayNode.isArray()) {
                 for (JsonNode node : arrayNode) {
-                    if (node.has("type") && node.has("name")) {
-                        String type = node.get("type").asText();
-                        String name = node.get("name").asText();
+                    String type = node.path("type").asText(null);
+                    String name = node.path("name").asText(null);
 
-                        if ("file".equals(type)) {
-                            filesToDelete.add(new DeleteFileDto(name, "Pfad TODO"));
-                        } else if ("folder".equals(type)) {
-                            foldersToDelete.add(new DeleteFolderDto(name, "Pfad TODO"));
-                        }
-                    } else {
-                        System.out.println("JSON is invalid: " + node);
+                    if (type == null || name == null) {
+                        continue;
+                    }
+
+                    String rawPath = node.path("path").asText("");
+                    String normalizedPath = PathUtils.normalize(rawPath);
+
+                    switch (type) {
+                        case "file" -> filesToDelete.add(new DeleteFileDto(name, normalizedPath));
+                        case "folder" -> foldersToDelete.add(new DeleteFolderDto(name, normalizedPath));
+                        default -> System.out.println("Unknown type in JSON: " + type);
                     }
                 }
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("Error by reading JSON: " + selectedItemsJson, e);
+            throw new RuntimeException("error while processing JSON", e);
         }
 
-        int deletedData = dataService.deleteData(username, filesToDelete);
+        int deletedFiles = dataService.deleteData(username, filesToDelete);
         int deletedFolders = folderService.deleteFolders(username, foldersToDelete);
-        redirectAttributes.addFlashAttribute("message", deletedData + deletedFolders);
+        redirectAttributes.addFlashAttribute("message", deletedFiles + deletedFolders + " elements deleted");
 
         return "redirect:/files/" + username;
     }

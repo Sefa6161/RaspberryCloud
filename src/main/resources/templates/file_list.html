@@ -138,7 +138,7 @@
                   <input
                     type="checkbox"
                     name="selectedItemsCheckbox"
-                    th:attr="data-type=${entry.folder ? 'folder' : 'file'}, data-name=${entry.name}"
+                    th:attr="data-type=${entry.folder ? 'folder' : 'file'}, data-name=${entry.name}, data-path=${currentPath}"
                   />
                 </td>
                 <td class="border border-gray-300 py-2 px-4">
@@ -222,7 +222,8 @@
             anyChecked = true;
             const type = checkbox.getAttribute("data-type");
             const name = checkbox.getAttribute("data-name");
-            selectedItems.push({ type, name });
+            const path = checkbox.getAttribute("data-path");
+            selectedItems.push({ type, name, path });
           }
         });
 
@@ -257,51 +258,5 @@
         updateDeleteButton();
       });
     </script>
-    <!-- <script>
-      function updateDeleteButton() {
-        const checkboxes = document.querySelectorAll(
-          'input[name="selectedItems"]'
-        );
-        const deleteButton = document.getElementById("deleteButton");
-
-        let anyChecked = false;
-        checkboxes.forEach((checkbox) => {
-          const type = checkbox.getAttribute("data-type");
-          const name = checkbox.getAttribute("data-name");
-          checkbox.value = JSON.stringify({ type, name }); // 💥 hier wird der Wert gesetzt
-          if (checkbox.checked) {
-            anyChecked = true;
-          }
-        });
-
-        if (anyChecked) {
-          deleteButton.disabled = false;
-          deleteButton.classList.remove("bg-gray-400", "cursor-not-allowed");
-          deleteButton.classList.add(
-            "bg-red-600",
-            "hover:bg-red-700",
-            "cursor-pointer"
-          );
-        } else {
-          deleteButton.disabled = true;
-          deleteButton.classList.remove(
-            "bg-red-600",
-            "hover:bg-red-700",
-            "cursor-pointer"
-          );
-          deleteButton.classList.add("bg-gray-400", "cursor-not-allowed");
-        }
-      }
-
-      document.addEventListener("DOMContentLoaded", function () {
-        const checkboxes = document.querySelectorAll(
-          'input[name="selectedItems"]'
-        );
-        checkboxes.forEach((checkbox) => {
-          checkbox.addEventListener("change", updateDeleteButton);
-        });
-        updateDeleteButton(); // initialer Check
-      });
-    </script> -->
   </body>
 </html>
