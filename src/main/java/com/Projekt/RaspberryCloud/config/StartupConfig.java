@@ -10,6 +10,7 @@ import com.Projekt.RaspberryCloud.model.User;
 import com.Projekt.RaspberryCloud.repository.UserRepository;
 
 @Component
+@org.springframework.context.annotation.Profile("!test")
 public class StartupConfig implements CommandLineRunner {
 
     private final UserRepository userRepository;
