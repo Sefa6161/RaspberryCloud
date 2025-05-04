@@ -32,25 +32,29 @@ public class DataService {
     }
 
     @Transactional
-    public String uploadData(String username, MultipartFile file, String currentPath) throws IOException {
+    public String uploadData(String username, MultipartFile[] files, String currentPath) throws IOException {
 
         Path userDir = baseDir.resolve(username);
-        Path target = userDir.resolve(currentPath).resolve(file.getOriginalFilename());
 
-        if (dataRepository.findByName(file.getOriginalFilename()).isPresent()) {
-            throw new EntityExistsException("File already uploaded");
+        for (MultipartFile file : files) {
+
+            Path target = userDir.resolve(currentPath).resolve(file.getOriginalFilename());
+
+            if (dataRepository.findByName(file.getOriginalFilename()).isPresent()) {
+                throw new EntityExistsException("File already uploaded");
+            }
+            Files.write(target, file.getBytes());
+
+            Data meta = new Data();
+            meta.setName(file.getOriginalFilename());
+            meta.setPath(PathUtils.normalize(currentPath));
+            meta.setAbsolutePath(target.toString());
+            meta.setDatatype(file.getContentType());
+            meta.setCreationTime(LocalDateTime.now());
+            meta.setLastModifiedTime(LocalDateTime.now());
+            meta.setUploadUser(username);
+            dataRepository.save(meta);
         }
-        Files.write(target, file.getBytes());
-
-        Data meta = new Data();
-        meta.setName(file.getOriginalFilename());
-        meta.setPath(PathUtils.normalize(currentPath));
-        meta.setAbsolutePath(target.toString());
-        meta.setDatatype(file.getContentType());
-        meta.setCreationTime(LocalDateTime.now());
-        meta.setLastModifiedTime(LocalDateTime.now());
-        meta.setUploadUser(username);
-        dataRepository.save(meta);
         return "/files" + username;
     }
 

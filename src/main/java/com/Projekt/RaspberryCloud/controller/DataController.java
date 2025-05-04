@@ -31,7 +31,7 @@ public class DataController {
     }
 
     @PostMapping("/upload")
-    public String upload(@RequestParam("file") MultipartFile file,
+    public String upload(@RequestParam("files") MultipartFile[] files,
             @PathVariable String username,
             @RequestParam String currentPath,
             Authentication authentication,
@@ -43,12 +43,12 @@ public class DataController {
 
         try {
             currentPath = PathUtils.normalize(currentPath);
-            dataService.uploadData(username, file, currentPath);
+            dataService.uploadData(username, files, currentPath);
         } catch (IOException e) {
             e.printStackTrace();
         }
         redirectAttributes.addFlashAttribute("message",
-                "File: " + file.getOriginalFilename() + " successfull uploaded");
+                files.length + " file successfull uploaded");
         return "redirect:/files/" + username;
     }
 
