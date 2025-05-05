@@ -40,7 +40,7 @@ public class DataService {
 
             Path target = userDir.resolve(currentPath).resolve(file.getOriginalFilename());
 
-            if (dataRepository.findByName(file.getOriginalFilename()).isPresent()) {
+            if (dataRepository.findByNameAndPath(file.getOriginalFilename(), currentPath).isPresent()) {
                 throw new EntityExistsException("File already uploaded");
             }
             Files.write(target, file.getBytes());

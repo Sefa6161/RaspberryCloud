@@ -17,4 +17,6 @@ public interface DataRepository extends JpaRepository<Data, Integer> {
 
     List<Data> findByUploadUser(String uploadUser);
 
+    Optional<Data> findByNameAndPath(String name, String path);
+
 }
