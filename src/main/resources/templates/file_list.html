@@ -34,19 +34,18 @@
 
     <!-- Main Content -->
     <div class="flex flex-col flex-1">
-      <!-- Topbar -->
       <header
         class="bg-gray-200 p-4 shadow-md flex items-center justify-between"
       >
         <h1 class="text-xl font-semibold">Meine Dateien</h1>
         <div class="hidden md:block">
-          <span class="text-gray-600">
-            Benutzer: <strong th:text="${#authentication.name}">Nutzer</strong>
-          </span>
+          <span class="text-gray-600"
+            >Benutzer:
+            <strong th:text="${#authentication.name}">Nutzer</strong></span
+          >
         </div>
       </header>
 
-      <!-- Page Content -->
       <main class="flex-1 overflow-y-auto p-4">
         <p>Aktueller Pfad: <span th:text="${currentPath}">/</span></p>
 
@@ -57,8 +56,6 @@
           >
             + Neuer Ordner
           </button>
-
-          <!-- Datei auswählen -->
           <button
             type="button"
             onclick="document.getElementById('fileUploadInput').click();"
@@ -66,8 +63,6 @@
           >
             Dateien auswählen
           </button>
-
-          <!-- Hochladen -->
           <button
             type="submit"
             form="uploadForm"
@@ -75,8 +70,15 @@
           >
             Hochladen
           </button>
-
-          <!-- Löschen -->
+          <button
+            type="button"
+            id="downloadButton"
+            onclick="triggerMultiDownload(username)"
+            class="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed"
+            disabled
+          >
+            Download
+          </button>
           <button
             id="deleteButton"
             type="submit"
@@ -105,7 +107,7 @@
           <input type="file" name="files" id="fileUploadInput" multiple />
         </form>
 
-        <!-- Delete-Form + Datei-Tabelle -->
+        <!-- Delete-Form + Tabelle -->
         <form
           id="deleteForm"
           th:action="@{/web/user/{username}/delete(username=${username})}"
@@ -146,7 +148,9 @@
                   <input
                     type="checkbox"
                     name="selectedItemsCheckbox"
-                    th:attr="data-type=${entry.folder ? 'folder' : 'file'}, data-name=${entry.name}, data-path=${currentPath}"
+                    th:data-type="${entry.folder ? 'folder' : 'file'}"
+                    th:data-name="${entry.name}"
+                    th:data-path="${currentPath != null ? currentPath : ''}"
                   />
                 </td>
                 <td class="border border-gray-300 py-2 px-4">
@@ -164,9 +168,7 @@
                 <td
                   th:text="${entry.datatype}"
                   class="border border-gray-300 py-2 px-4"
-                >
-                  Typ
-                </td>
+                ></td>
                 <td
                   th:text="${entry.creationTime != null ? #temporals.format(entry.creationTime, 'dd.MM.yyyy HH:mm') : '-'}"
                   class="border border-gray-300 py-2 px-4"
@@ -180,6 +182,20 @@
           </table>
         </form>
 
+        <form
+          id="downloadForm"
+          th:action="@{/web/user/{username}/download(username=${username})}"
+          method="post"
+        >
+          <input
+            type="hidden"
+            th:name="${_csrf.parameterName}"
+            th:value="${_csrf.token}"
+          />
+          <input type="hidden" name="currentPath" th:value="${currentPath}" />
+          <input type="hidden" name="selectedItems" id="downloadItemsInput" />
+        </form>
+
         <p
           th:if="${message}"
           th:text="${message}"
@@ -188,17 +204,19 @@
       </main>
     </div>
 
-    <!-- JS: Delete Button aktivieren -->
     <script>
-      function updateDeleteButton() {
+      function updateActionButtons() {
         const checkboxes = document.querySelectorAll(
           'input[name="selectedItemsCheckbox"]'
         );
         const deleteButton = document.getElementById("deleteButton");
-        const hiddenInput = document.getElementById("selectedItemsInput");
+        const downloadButton = document.getElementById("downloadButton");
+        const deleteInput = document.getElementById("selectedItemsInput");
+        const downloadInput = document.getElementById("downloadItemsInput");
 
         let selectedItems = [];
         let anyChecked = false;
+        let fileChecked = false;
 
         checkboxes.forEach((checkbox) => {
           if (checkbox.checked) {
@@ -206,29 +224,31 @@
             const type = checkbox.getAttribute("data-type");
             const name = checkbox.getAttribute("data-name");
             const path = checkbox.getAttribute("data-path");
-            selectedItems.push({ type, name, path });
+            const normalizedPath = path === null || path === "null" ? "" : path;
+            selectedItems.push({ type, name, normalizedPath });
+
+            if (type === "file") {
+              fileChecked = true;
+            }
           }
         });
 
-        hiddenInput.value = JSON.stringify(selectedItems);
+        deleteInput.value = JSON.stringify(selectedItems);
+        downloadInput.value = JSON.stringify(selectedItems);
 
-        if (anyChecked) {
-          deleteButton.disabled = false;
-          deleteButton.classList.remove("bg-gray-400", "cursor-not-allowed");
-          deleteButton.classList.add(
-            "bg-red-600",
-            "hover:bg-red-700",
-            "cursor-pointer"
-          );
-        } else {
-          deleteButton.disabled = true;
-          deleteButton.classList.remove(
-            "bg-red-600",
-            "hover:bg-red-700",
-            "cursor-pointer"
-          );
-          deleteButton.classList.add("bg-gray-400", "cursor-not-allowed");
-        }
+        // Delete Button
+        deleteButton.disabled = !anyChecked;
+        deleteButton.classList.toggle("cursor-not-allowed", !anyChecked);
+        deleteButton.classList.toggle("bg-gray-400", !anyChecked);
+        deleteButton.classList.toggle("bg-red-600", anyChecked);
+        deleteButton.classList.toggle("hover:bg-red-700", anyChecked);
+
+        // Download Button
+        downloadButton.disabled = !fileChecked;
+        downloadButton.classList.toggle("cursor-not-allowed", !fileChecked);
+        downloadButton.classList.toggle("bg-gray-400", !fileChecked);
+        downloadButton.classList.toggle("bg-green-600", fileChecked);
+        downloadButton.classList.toggle("hover:bg-green-700", fileChecked);
       }
 
       document.addEventListener("DOMContentLoaded", () => {
@@ -236,10 +256,37 @@
           'input[name="selectedItemsCheckbox"]'
         );
         checkboxes.forEach((cb) =>
-          cb.addEventListener("change", updateDeleteButton)
+          cb.addEventListener("change", updateActionButtons)
         );
-        updateDeleteButton();
+        updateActionButtons();
       });
+
+      function triggerMultiDownload(username) {
+        const checkboxes = document.querySelectorAll(
+          'input[name="selectedItemsCheckbox"]'
+        );
+        checkboxes.forEach((cb) => {
+          if (cb.checked && cb.getAttribute("data-type") === "file") {
+            const name = cb.getAttribute("data-name");
+            let path = cb.getAttribute("data-path");
+            if (path === null || path === "null") path = "";
+
+            const url = `/web/user/${username}/download?name=${encodeURIComponent(
+              name
+            )}&currentPath=${encodeURIComponent(path)}`;
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }
+        });
+      }
+    </script>
+    <script th:inline="javascript">
+      const username = /*[[${username}]]*/ "fallback";
     </script>
   </body>
 </html>

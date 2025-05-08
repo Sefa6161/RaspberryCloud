@@ -12,11 +12,11 @@ public class DataMapper {
         DataDto dataDto = new DataDto();
         dataDto.setName(data.getName());
 
-        Path paths = Paths.get(data.getPath(), data.getName());
+        Path paths = Paths.get(data.getAbsolutePath());
         try {
             dataDto.setBytes(Files.readAllBytes(paths));
         } catch (Exception e) {
-            System.out.println("Fehler beim Einlesen für Download");
+            e.printStackTrace();
         }
 
         return dataDto;

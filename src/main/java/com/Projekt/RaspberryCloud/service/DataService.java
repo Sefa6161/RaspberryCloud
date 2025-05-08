@@ -1,6 +1,6 @@
 package com.Projekt.RaspberryCloud.service;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,12 +8,12 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.Projekt.RaspberryCloud.dto.DataDto;
 import com.Projekt.RaspberryCloud.dto.DeleteFileDto;
-import com.Projekt.RaspberryCloud.dto.mapper.DataMapper;
 import com.Projekt.RaspberryCloud.model.Data;
 import com.Projekt.RaspberryCloud.repository.DataRepository;
 import com.Projekt.RaspberryCloud.util.PathUtils;
@@ -58,39 +58,21 @@ public class DataService {
         return "/files" + username;
     }
 
-    public DataDto downloadData(Integer id, String path) {
-        // TODO die Datei wird gerade über die ID aus der Datenbank gesucht
-        // Der User kennt die ID nicht => neuen Weg implementieren um die Downloaddatei
-        // aus der Datenbank zu finden
-        Data data = dataRepository.findById(id).orElseThrow(() -> new RuntimeException("Datei nicht in der Datenbank"));
-        DataDto dataDto = DataMapper.entityToDto(data);
+    public Resource prepareDownload(String username, String currentPath, String name) throws IOException {
+        String normalizedPath = PathUtils.normalize(currentPath);
 
-        // check ob die Datei bereits existiert
-        // TODO checken ob lastModified Tag der Datei älter ist => Dann downloaden
-        try {
-            File file = new File(path, data.getName());
-            System.out.println("Path beim Download: " + file.getAbsolutePath());
-            System.out.println("Filename: " + data.getName());
+        Data data = dataRepository.findByNameAndPath(name, normalizedPath)
+                .orElseThrow(() -> new FileNotFoundException("File not found"));
 
-            if (file.exists() && !file.isDirectory()) {
-                System.out.println("Datei existiert");
-                return null;
-            }
-
-        } catch (Exception e) {
-            System.out.println("Fehler beim checken der Datei");
+        Path filePath = Paths.get(data.getAbsolutePath());
+        if (!Files.exists(filePath)) {
+            throw new FileNotFoundException("File not found");
         }
 
-        // Datei abspeichern in download Ordner und counter hochzählen
-        Path filePath = Paths.get(path, dataDto.getName());
-        try {
-            Files.write(filePath, dataDto.getBytes());
-            data.incrementDownloadCounter();
-            dataRepository.save(data);
-        } catch (Exception e) {
-            System.out.println("Datei konnte nicht beschrieben werden");
-        }
-        return dataDto;
+        data.incrementDownloadCounter();
+        dataRepository.save(data);
+
+        return new UrlResource(filePath.toUri());
     }
 
     public int deleteData(String username, List<DeleteFileDto> filesToDelete) {
