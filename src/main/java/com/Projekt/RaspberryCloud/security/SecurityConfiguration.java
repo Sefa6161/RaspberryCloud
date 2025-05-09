@@ -45,7 +45,7 @@ public class SecurityConfiguration {
         @Order(2)
         public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
                 http.securityMatcher("/web/**", "/login", "/logout",
-                                "/dashboard", "api/web/**",
+                                "/dashboard/**", "api/web/**",
                                 "/signup", "style.css", "/change_password", "/change_username", "/files/**",
                                 "/web/user/**")
                                 .authorizeHttpRequests(auth -> auth

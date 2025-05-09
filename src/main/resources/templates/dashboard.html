@@ -10,15 +10,15 @@
     <aside class="bg-gray-200 w-64 p-6 shadow-md hidden md:block">
       <h2 class="text-2xl font-bold mb-8">NAS Dashboard</h2>
       <nav class="flex flex-col gap-4">
-        <a href="/dashboard" class="text-gray-700 hover:text-blue-500"
+        <a th:href="@{/dashboard}" class="text-gray-700 hover:text-blue-500"
           >Übersicht</a
         >
+
         <a
-          th:href="@{/files/{username}(username=${#authentication.name})}"
+          th:href="@{/files/{username}(username=${username})}"
           class="text-gray-700 hover:text-blue-500"
+          >Meine Dateien</a
         >
-          Meine Dateien
-        </a>
         <a href="/users" class="text-gray-700 hover:text-blue-500">Benutzer</a>
         <a href="/settings" class="text-gray-700 hover:text-blue-500"
           >Einstellungen</a
@@ -44,7 +44,7 @@
         <h1 class="text-xl font-semibold">Willkommen zurück!</h1>
         <div class="hidden md:block">
           <span class="text-gray-600">
-            Benutzer: <strong th:text="${#authentication.name}">Nutzer</strong>
+            Benutzer: <strong th:text="${username}">Nutzer</strong>
           </span>
         </div>
       </header>
@@ -54,10 +54,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <!-- Card 1 -->
           <div class="bg-gray-100 p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">
-              Dateien gespeichert (not implemented)
-            </h3>
-            <p class="text-gray-500 text-2xl">1.204</p>
+            <h3 class="text-lg font-semibold mb-2">Dateien gespeichert</h3>
+            <p class="text-gray-500 text-2xl" th:text="${fileCount}">–</p>
           </div>
 
           <!-- Card 2 -->

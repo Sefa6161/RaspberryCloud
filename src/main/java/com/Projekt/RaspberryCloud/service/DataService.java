@@ -101,4 +101,8 @@ public class DataService {
 
     }
 
+    public long getFileCountForUser(String username) {
+        return dataRepository.findByUploadUser(username).size();
+    }
+
 }
