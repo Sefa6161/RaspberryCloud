@@ -11,7 +11,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.Projekt.RaspberryCloud.service.DataService;
 import com.Projekt.RaspberryCloud.service.FolderService;
-import com.Projekt.RaspberryCloud.util.AccessValidator;
 import com.Projekt.RaspberryCloud.util.PathUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +18,7 @@ import com.Projekt.RaspberryCloud.dto.DeleteFileDto;
 import com.Projekt.RaspberryCloud.dto.DeleteFolderDto;
 
 @Controller
-@RequestMapping("/web/user/{username}")
+@RequestMapping("/web/user")
 public class DeleteController {
 
     private final DataService dataService;
@@ -31,14 +30,9 @@ public class DeleteController {
     }
 
     @PostMapping("/delete")
-    public String deleteData(@PathVariable String username,
-            @RequestParam("selectedItems") String selectedItemsJson,
+    public String deleteData(@RequestParam("selectedItems") String selectedItemsJson,
             Authentication authentication,
             RedirectAttributes redirectAttributes) throws AccessDeniedException {
-
-        if (!AccessValidator.canAccess(username, authentication)) {
-            throw new AccessDeniedException("Access Denied");
-        }
 
         // read the JSON
         ObjectMapper objectMapper = new ObjectMapper();
@@ -72,10 +66,10 @@ public class DeleteController {
             throw new RuntimeException("error while processing JSON", e);
         }
 
-        int deletedFiles = dataService.deleteData(username, filesToDelete);
-        int deletedFolders = folderService.deleteFolders(username, foldersToDelete);
+        int deletedFiles = dataService.deleteData(authentication.getName(), filesToDelete);
+        int deletedFolders = folderService.deleteFolders(authentication.getName(), foldersToDelete);
         redirectAttributes.addFlashAttribute("message", deletedFiles + deletedFolders + " elements deleted");
 
-        return "redirect:/files/" + username;
+        return "redirect:/files";
     }
 }

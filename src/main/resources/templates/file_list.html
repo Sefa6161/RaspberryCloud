@@ -96,7 +96,7 @@
         <!-- Upload-Form -->
         <form
           id="uploadForm"
-          th:action="@{/web/user/{username}/upload(username=${username})}"
+          th:action="@{/web/user/upload}"
           method="post"
           enctype="multipart/form-data"
           class="hidden"
@@ -113,7 +113,7 @@
         <!-- Delete-Form + Tabelle -->
         <form
           id="deleteForm"
-          th:action="@{/web/user/{username}/delete(username=${username})}"
+          th:action="@{/web/user/delete}"
           method="post"
           onsubmit="return confirm('Ausgewählte Dateien wirklich löschen?');"
         >
@@ -185,11 +185,7 @@
           </table>
         </form>
 
-        <form
-          id="downloadForm"
-          th:action="@{/web/user/{username}/download(username=${username})}"
-          method="post"
-        >
+        <form id="downloadForm" th:action="@{/web/user/download}" method="post">
           <input
             type="hidden"
             th:name="${_csrf.parameterName}"
@@ -274,7 +270,7 @@
             let path = cb.getAttribute("data-path");
             if (path === null || path === "null") path = "";
 
-            const url = `/web/user/${username}/download?name=${encodeURIComponent(
+            const url = `/web/user/download?name=${encodeURIComponent(
               name
             )}&currentPath=${encodeURIComponent(path)}`;
 
