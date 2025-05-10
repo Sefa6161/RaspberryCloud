@@ -27,7 +27,7 @@ public class TestDataGenerator {
         return folder;
     }
 
-    public static Data createFile(String name, String type, String path, String absPath, String user) {
+    public static Data createFile(String name, String type, String path, String absPath, String user, long size) {
         Data file = new Data();
         file.setName(name);
         file.setDatatype(type);
@@ -36,6 +36,7 @@ public class TestDataGenerator {
         file.setCreationTime(LocalDateTime.now());
         file.setLastModifiedTime(LocalDateTime.now());
         file.setUploadUser(user);
+        file.setMemorySize(size);
         return file;
     }
 }

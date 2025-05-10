@@ -27,11 +27,11 @@ public class Data {
     private LocalDateTime creationTime;
     private LocalDateTime lastModifiedTime;
     private String uploadUser;
+    private long memorySize; // kByte
 
     @Column(unique = true)
     private String absolutePath;
 
-    // Constructor
     public Data() {
     }
 

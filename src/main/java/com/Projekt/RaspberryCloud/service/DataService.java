@@ -53,6 +53,7 @@ public class DataService {
             meta.setCreationTime(LocalDateTime.now());
             meta.setLastModifiedTime(LocalDateTime.now());
             meta.setUploadUser(username);
+            meta.setMemorySize(file.getSize());
             dataRepository.save(meta);
         }
         return "/files" + username;

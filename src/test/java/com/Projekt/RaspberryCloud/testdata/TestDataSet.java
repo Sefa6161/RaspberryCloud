@@ -61,15 +61,15 @@ public class TestDataSet {
 
         // Generate test-files
         Data file1 = TestDataGenerator.createFile("file1.txt", "text/plain", "",
-                basePath + "/file1.txt", "sefa_test");
+                basePath + "/file1.txt", "sefa_test", 10);
         Data file2 = TestDataGenerator.createFile("file2.txt", "text/plain", "",
-                basePath + "/file2.txt", "sefa_test");
+                basePath + "/file2.txt", "sefa_test", 15);
         Data file3 = TestDataGenerator.createFile("file3.txt", "text/plain", "rootfolder1",
-                basePath + "/rootfolder1/file3.txt", "sefa_test");
+                basePath + "/rootfolder1/file3.txt", "sefa_test", 20);
         Data file4 = TestDataGenerator.createFile("file4.txt", "text/plain", "rootfolder1",
-                basePath + "/rootfolder1/file4.txt", "sefa_test");
+                basePath + "/rootfolder1/file4.txt", "sefa_test", 25);
         Data file5 = TestDataGenerator.createFile("file5.txt", "text/plain", "rootfolder1/subfolder1",
-                basePath + "/rootfolder1/subfolder1/file5.txt", "sefa_test");
+                basePath + "/rootfolder1/subfolder1/file5.txt", "sefa_test", 30);
 
         userRepository.save(testUser);
         folderRepository.saveAll(List.of(rootFolder1, rootFolder2, subFolder1, subFolder2, subFolder3));

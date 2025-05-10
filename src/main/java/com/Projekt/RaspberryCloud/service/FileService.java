@@ -65,7 +65,7 @@ public class FileService {
                         file.getName(),
                         file.getDatatype(),
                         file.getCreationTime(),
-                        file.getDownloadCounter(),
+                        file.getMemorySize(),
                         false));
             }
         }

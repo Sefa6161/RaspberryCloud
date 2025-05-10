@@ -141,7 +141,7 @@
                   Hochgeladen am
                 </th>
                 <th class="border border-gray-300 px-4 py-2 text-left">
-                  Downloads
+                  Size (kByte)
                 </th>
               </tr>
             </thead>
@@ -177,7 +177,7 @@
                   class="border border-gray-300 py-2 px-4"
                 ></td>
                 <td
-                  th:text="${entry.downloadCounter != null ? entry.downloadCounter : '-'}"
+                  th:text="${entry.memorySize != null ? entry.memorySize : '-'}"
                   class="border border-gray-300 py-2 px-4"
                 ></td>
               </tr>

@@ -12,6 +12,6 @@ public class FileViewDto {
     private String name;
     private String datatype;
     private LocalDateTime creationTime;
-    private int downloadCounter;
+    private long memorySize;
     private boolean isFolder;
 }
