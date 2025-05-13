@@ -19,6 +19,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
+    // This key is visible on GitHub => on production use a new SECRET_KEY
     private static final String SECRET_KEY = "174c765c688c39a61dc97fedaa75328ce4c47e285a45ea4ea991e7029bc4454509627adaf0eadcdf14d8cc95c37b89e8cc5435e236c2d9264daa0a72b23ff809fd779fecbdb71bb178859d425d52f944be9bcda52cc640621115b4a84839cb70bb71411feb5db7500c427162cbcff7baea7487542468eec5898dcb832b4397cbe5f44413f471c4697871e48dcbe07ef5b053ce5d97fe5e0206cf47b2aed44acc62c2156cdabbf063ff750d1faa16cb583442f6259f5677baa4d42b643ebbd9b0a7a98e7475364fa275c55dcb7a59b3e665fdc4b218b6c390cce8fdac087ab954ce2272795dfee3e51a8af7dc5239fb855fc4e6a05913bebfb2c3d63522a66ab2";
 
     public JwtService() {

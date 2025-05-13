@@ -72,30 +72,4 @@ public class SecurityConfiguration {
                 return http.build();
         }
 
-        // @Bean
-        // @Order(3)
-        // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
-        // Exception {
-
-        // // Alle Endpunkte absichern für authentifizierte User
-        // http.csrf(csrf -> csrf.disable())
-        // .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-        // .userDetailsService(userDetailsService);
-
-        // return http.build();
-        // }
-
-        // @Bean
-        // @Order(4)
-        // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
-        // Exception {
-
-        // // Freischalten aller Endpunkte für Entwicklungsphase
-        // http.csrf(csrf -> csrf.disable())
-        // .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-        // .userDetailsService(userDetailsService);
-
-        // return http.build();
-        // }
-
 }
