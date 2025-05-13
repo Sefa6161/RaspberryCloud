@@ -127,4 +127,16 @@ public class UserService {
         SecurityContextHolder.getContext().setAuthentication(newAuth);
     }
 
+    public long getTotalSpace() {
+        final Path baseUsersDir = Paths.get(System.getProperty("user.home"), "RaspberryCloud", "Users");
+        File file = new File(baseUsersDir.toString());
+        return file.getTotalSpace();
+    }
+
+    public long getFreeSpace() {
+        final Path baseUsersDir = Paths.get(System.getProperty("user.home"), "RaspberryCloud", "Users");
+        File file = new File(baseUsersDir.toString());
+        return file.getUsableSpace();
+    }
+
 }

@@ -8,14 +8,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.Projekt.RaspberryCloud.service.DataService;
+import com.Projekt.RaspberryCloud.service.UserService;
 import com.Projekt.RaspberryCloud.util.AccessValidator;
 
 @Controller
 public class WebController {
     private final DataService dataService;
+    private final UserService userService;
 
-    public WebController(DataService dataService) {
+    public WebController(DataService dataService, UserService userService) {
         this.dataService = dataService;
+        this.userService = userService;
     }
 
     @GetMapping("/dashboard")
@@ -27,9 +30,16 @@ public class WebController {
         }
 
         long fileCount = dataService.getFileCountForUser(authentication.getName());
+        long totalSpace = userService.getTotalSpace();
+        long freeSpace = userService.getFreeSpace();
+        long usedSpace = totalSpace - freeSpace;
+        int usagePercent = (int) ((double) usedSpace / totalSpace * 100);
 
         model.addAttribute("fileCount", fileCount);
         model.addAttribute("username", authentication.getName());
+        model.addAttribute("usedSpace", formatBytes(usedSpace));
+        model.addAttribute("totalSpace", formatBytes(totalSpace));
+        model.addAttribute("usagePercent", usagePercent);
 
         return "dashboard";
     }
@@ -42,6 +52,11 @@ public class WebController {
     @GetMapping("/change_username")
     public String changeUsername() {
         return "change_username";
+    }
+
+    private String formatBytes(long bytes) {
+        double gb = bytes / (1024.0 * 1024 * 1024);
+        return String.format("%.2f GB", gb);
     }
 
 }
