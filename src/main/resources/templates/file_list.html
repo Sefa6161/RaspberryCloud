@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
-    <title th:text="${username} + '‘s Dateien'">Dateiliste</title>
+    <title th:text="Dateien">Dateiliste</title>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body class="bg-gray-300 flex h-screen">
@@ -67,8 +67,8 @@
             Dateien auswählen
           </button>
           <button
-            type="submit"
-            form="uploadForm"
+            type="button"
+            onclick="submitUploadForm()"
             class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           >
             Hochladen
@@ -91,6 +91,11 @@
           >
             Löschen
           </button>
+        </div>
+
+        <div id="filePreview" class="mt-4 bg-white p-4 rounded shadow hidden">
+          <h3 class="font-semibold mb-2">Ausgewählte Dateien:</h3>
+          <ul id="fileList" class="space-y-1 text-gray-700"></ul>
         </div>
 
         <!-- Upload-Form -->
@@ -293,6 +298,123 @@
           sidebar.style.width = "0px";
           sidebar.style.padding = "0";
         }
+      }
+
+      let selectedFiles = [];
+
+      document
+        .getElementById("fileUploadInput")
+        .addEventListener("change", function () {
+          const previewContainer = document.getElementById("filePreview");
+          const fileList = document.getElementById("fileList");
+
+          selectedFiles = [...selectedFiles, ...Array.from(this.files)];
+
+          selectedFiles = selectedFiles.filter(
+            (file, index, self) =>
+              index ===
+              self.findIndex(
+                (f) => f.name === file.name && f.size === file.size
+              )
+          );
+
+          fileList.innerHTML = "";
+          selectedFiles.forEach((file, index) => {
+            const li = document.createElement("li");
+            li.classList.add(
+              "flex",
+              "items-center",
+              "bg-gray-100",
+              "px-3",
+              "py-1",
+              "rounded"
+            );
+
+            const sizeKB = (file.size / 1024).toFixed(1);
+            li.innerHTML = `
+            <button onclick="removeFile(${index})" class="text-red-500 hover:text-red-700 font-bold mr-2">✕</button>
+            <span>${file.name} (${sizeKB} KB)</span>
+            `;
+            fileList.appendChild(li);
+          });
+
+          previewContainer.classList.toggle(
+            "hidden",
+            selectedFiles.length === 0
+          );
+
+          this.value = "";
+        });
+
+      function removeFile(index) {
+        selectedFiles.splice(index, 1);
+        updateFilePreview();
+      }
+
+      function updateFilePreview() {
+        const fileList = document.getElementById("fileList");
+        const previewContainer = document.getElementById("filePreview");
+
+        fileList.innerHTML = "";
+
+        selectedFiles.forEach((file, index) => {
+          const li = document.createElement("li");
+          li.classList.add(
+            "flex",
+            "justify-between",
+            "items-center",
+            "bg-gray-100",
+            "px-3",
+            "py-1",
+            "rounded"
+          );
+
+          const sizeKB = (file.size / 1024).toFixed(1);
+          li.innerHTML = `
+        <span>${file.name} (${sizeKB} KB)</span>
+        <button onclick="removeFile(${index})" class="text-red-500 hover:text-red-700 font-bold ml-2">✕</button>
+      `;
+          fileList.appendChild(li);
+        });
+
+        previewContainer.classList.toggle("hidden", selectedFiles.length === 0);
+      }
+
+      function submitUploadForm() {
+        if (selectedFiles.length === 0) {
+          alert("Bitte wählen Sie Dateien aus.");
+          return;
+        }
+
+        const form = document.getElementById("uploadForm");
+        const csrfToken = form.querySelector('input[name="_csrf"]').value;
+        const currentPath = form.querySelector(
+          'input[name="currentPath"]'
+        ).value;
+
+        const formData = new FormData();
+        selectedFiles.forEach((file) => formData.append("files", file));
+        formData.append("currentPath", currentPath);
+
+        fetch(form.action, {
+          method: "POST",
+          headers: {
+            "X-CSRF-TOKEN": csrfToken,
+          },
+          body: formData,
+        })
+          .then((response) => {
+            if (response.ok) {
+              alert("Upload erfolgreich!");
+              location.reload();
+            } else {
+              alert("Upload fehlgeschlagen.");
+            }
+          })
+          .catch((error) => {
+            console.error("Fehler beim Upload:", error);
+            alert("Ein Fehler ist aufgetreten.");
+          });
       }
     </script>
     <script th:inline="javascript">
