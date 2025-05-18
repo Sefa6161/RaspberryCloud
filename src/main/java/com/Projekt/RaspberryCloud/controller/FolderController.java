@@ -36,7 +36,7 @@ public class FolderController {
 
         folderService.createNewFolder(username, currentPath, folderName);
 
-        return "redirect:/files/" + username + (currentPath.isEmpty() ? "" : "?path=" + currentPath);
+        return "redirect:/files" + (currentPath.isEmpty() ? "" : "?path=" + currentPath);
 
     }
 
