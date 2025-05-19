@@ -380,7 +380,7 @@
           const li = document.createElement("li");
           li.classList.add(
             "flex",
-            "justify-between",
+            // "justify-between",
             "items-center",
             "bg-gray-100",
             "px-3",
@@ -390,8 +390,8 @@
 
           const sizeKB = (file.size / 1024).toFixed(1);
           li.innerHTML = `
-        <span>${file.name} (${sizeKB} KB)</span>
-        <button onclick="removeFile(${index})" class="text-red-500 hover:text-red-700 font-bold ml-2">✕</button>
+        <button onclick="removeFile(${index})" class="text-red-500 hover:text-red-700 font-bold mr-2">✕</button>
+            <span>${file.name} (${sizeKB} KB)</span>
       `;
           fileList.appendChild(li);
         });
