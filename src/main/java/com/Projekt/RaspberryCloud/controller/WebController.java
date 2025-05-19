@@ -21,6 +21,11 @@ public class WebController {
         this.userService = userService;
     }
 
+    @GetMapping("")
+    public String redirectToDashboard() {
+        return "redirect:/dashboard";
+    }
+
     @GetMapping("/dashboard")
     public String showDashboard(Model model,
             Authentication authentication) throws AccessDeniedException {
