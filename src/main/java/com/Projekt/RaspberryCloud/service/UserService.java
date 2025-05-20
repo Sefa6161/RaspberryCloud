@@ -44,6 +44,8 @@ public class UserService {
             throw new IllegalArgumentException("Passwoerter stimmen nicht ueberein!");
         }
 
+        validatePasswordStrength(registerUserDto.getPassword());
+
         User user = new User();
         user.setUsername(registerUserDto.getUsername());
         user.setEmail(registerUserDto.getEmail());
@@ -63,11 +65,13 @@ public class UserService {
             String authUsername) {
 
         User user = userRepository.findByUsername(authUsername)
-                .orElseThrow(() -> new RuntimeException("User nicht gefunden"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!passwordEncoder.matches(changePasswordDto.getCurrentPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("Passwoerter stimmen nicht ueber ein");
+            throw new IllegalArgumentException("password does not match");
         }
+
+        validatePasswordStrength(changePasswordDto.getNewPassword());
 
         user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
         user.setPasswordChangeRequired(false);
@@ -137,6 +141,25 @@ public class UserService {
         final Path baseUsersDir = Paths.get(System.getProperty("user.home"), "RaspberryCloud", "Users");
         File file = new File(baseUsersDir.toString());
         return file.getUsableSpace();
+    }
+
+    private void validatePasswordStrength(String password) {
+        StringBuilder sb = new StringBuilder();
+
+        if (password.length() < 8)
+            sb.append("Mindestens 8 Zeichen. ");
+        if (!password.matches(".*[A-Z].*"))
+            sb.append("Mindestens ein Großbuchstabe. ");
+        if (!password.matches(".*[a-z].*"))
+            sb.append("Mindestens ein Kleinbuchstabe. ");
+        if (!password.matches(".*\\d.*"))
+            sb.append("Mindestens eine Zahl. ");
+        if (!password.matches(".*[@$!%*#?&].*"))
+            sb.append("Mindestens ein Sonderzeichen (@$!%*#?&). ");
+
+        if (!sb.isEmpty()) {
+            throw new IllegalArgumentException("Passwort zu schwach: " + sb.toString());
+        }
     }
 
 }
