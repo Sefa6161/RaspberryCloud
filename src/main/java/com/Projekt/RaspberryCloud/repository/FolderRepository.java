@@ -14,5 +14,7 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
 
     List<Folder> findByPath(String currentPath);
 
+    List<Folder> findByFolderOwnerAndPath(String folderOwner, String currentPath);
+
     Optional<Folder> findByPathAndFoldername(String path, String foldername);
 }

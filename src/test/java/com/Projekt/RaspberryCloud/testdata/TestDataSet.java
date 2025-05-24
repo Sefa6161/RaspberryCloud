@@ -50,14 +50,14 @@ public class TestDataSet {
         // Generate test-folders
         User testUser = TestDataGenerator.createUser("sefa_test", "123", passwordEncoder);
         String basePath = Paths.get(System.getProperty("user.home"), "RaspberryCloud", "Users", "sefa_test").toString();
-        Folder rootFolder1 = TestDataGenerator.createFolder("", "rootfolder1", basePath + "/rootfolder1");
-        Folder rootFolder2 = TestDataGenerator.createFolder("", "rootfolder2", basePath + "/rootfolder2");
+        Folder rootFolder1 = TestDataGenerator.createFolder("", "rootfolder1", basePath + "/rootfolder1", "sefa_test");
+        Folder rootFolder2 = TestDataGenerator.createFolder("", "rootfolder2", basePath + "/rootfolder2", "sefa_test");
         Folder subFolder1 = TestDataGenerator.createFolder("rootfolder1", "subfolder1",
-                basePath + "/rootfolder1/subfolder1");
+                basePath + "/rootfolder1/subfolder1", "sefa_test");
         Folder subFolder2 = TestDataGenerator.createFolder("rootfolder1", "subfolder2",
-                basePath + "/rootfolder1/subfolder2");
+                basePath + "/rootfolder1/subfolder2", "sefa_test");
         Folder subFolder3 = TestDataGenerator.createFolder("rootfolder2", "subfolder3",
-                basePath + "/rootfolder2/subfolder3");
+                basePath + "/rootfolder2/subfolder3", "sefa_test");
 
         // Generate test-files
         Data file1 = TestDataGenerator.createFile("file1.txt", "text/plain", "",

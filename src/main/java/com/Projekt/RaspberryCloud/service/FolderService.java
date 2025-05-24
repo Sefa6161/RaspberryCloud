@@ -36,6 +36,7 @@ public class FolderService {
             newFolder.setFoldername(folderName);
             newFolder.setPath(PathUtils.normalize(currentPath));
             newFolder.setAbsolutePath(dir.toString());
+            newFolder.setFolderOwner(username);
 
             folderRepository.save(newFolder);
         } catch (IOException e) {

@@ -72,7 +72,7 @@ public class FileService {
 
         // display folders
         String normalizedPath = PathUtils.normalize(currentPath);
-        List<Folder> folders = folderRepository.findByPath(normalizedPath);
+        List<Folder> folders = folderRepository.findByFolderOwnerAndPath(username, normalizedPath);
         for (Folder folder : folders) {
             entries.add(new FileViewDto(folder.getFoldername(),
                     "Folder",

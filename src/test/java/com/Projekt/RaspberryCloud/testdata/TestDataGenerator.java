@@ -19,11 +19,12 @@ public class TestDataGenerator {
         return user;
     }
 
-    public static Folder createFolder(String path, String name, String absPath) {
+    public static Folder createFolder(String path, String name, String absPath, String username) {
         Folder folder = new Folder();
         folder.setPath(path);
         folder.setFoldername(name);
         folder.setAbsolutePath(absPath);
+        folder.setFolderOwner(username);
         return folder;
     }
 

@@ -21,4 +21,6 @@ public class Folder {
     private String foldername;
     private String path;
     private String absolutePath;
+    private String folderOwner;
+
 }
