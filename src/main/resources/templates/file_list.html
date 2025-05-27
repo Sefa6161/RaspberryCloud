@@ -156,9 +156,9 @@
               class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal"
             >
               <tr>
-                <th class="border border-gray-300 px-4 py-2 text-left">
-                  Auswahl
-                </th>
+                <th
+                  class="border border-gray-300 w-px px-4 py-2 text-left"
+                ></th>
                 <th class="border border-gray-300 px-4 py-2 text-left">Name</th>
                 <th class="border border-gray-300 px-4 py-2 text-left">Typ</th>
                 <th class="border border-gray-300 px-4 py-2 text-left">
@@ -170,6 +170,19 @@
               </tr>
             </thead>
             <tbody>
+              <tr th:if="${currentPath != ''}">
+                <td class="border border-gray-300 py-2 px-4"></td>
+                <td class="border border-gray-300 py-2 px-4">
+                  <a
+                    th:href="@{/files(path=${#strings.substring(currentPath, 0, currentPath.lastIndexOf('/'))})}"
+                    >..</a
+                  >
+                </td>
+                <td class="border border-gray-300 py-2 px-4">-</td>
+                <td class="border border-gray-300 py-2 px-4">-</td>
+                <td class="border border-gray-300 py-2 px-4">-</td>
+              </tr>
+
               <tr th:each="entry : ${entries}" class="hover:bg-gray-50">
                 <td class="border border-gray-300 py-2 px-4">
                   <input
