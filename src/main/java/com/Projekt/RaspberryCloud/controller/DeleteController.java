@@ -51,7 +51,7 @@ public class DeleteController {
                         continue;
                     }
 
-                    String rawPath = node.path("path").asText("");
+                    String rawPath = node.path("normalizedPath").asText("");
                     String normalizedPath = PathUtils.normalize(rawPath);
 
                     switch (type) {

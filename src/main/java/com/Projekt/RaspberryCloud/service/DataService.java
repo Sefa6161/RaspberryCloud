@@ -89,7 +89,7 @@ public class DataService {
                         .resolve(filename)
                         .normalize();
                 if (Files.deleteIfExists(fileToDeletePath)) {
-                    Data data = dataRepository.findByName(filename).get();
+                    Data data = dataRepository.findByNameAndPath(filename, fileToDelete.getPath()).get();
                     dataRepository.delete(data);
                     deletedCounter++;
                 }
