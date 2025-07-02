@@ -24,8 +24,8 @@ import jakarta.transaction.Transactional;
 @Service
 public class DataService {
     private final DataRepository dataRepository;
-    private final Path baseDir = Paths.get(System.getProperty("user.home"),
-            "RaspberryCloud", "Users");
+    private Path baseDir = Paths.get(System.getProperty("user.home"),
+            "RaspberryCloud", "Users");;
 
     public DataService(DataRepository dataRepository) {
         this.dataRepository = dataRepository;
@@ -43,6 +43,7 @@ public class DataService {
             if (dataRepository.findByNameAndPath(file.getOriginalFilename(), currentPath).isPresent()) {
                 throw new EntityExistsException("File already uploaded");
             }
+            Files.createDirectories(target.getParent());
             Files.write(target, file.getBytes());
 
             Data meta = new Data();
