@@ -21,12 +21,13 @@ public class CustomAuthSuccessHandler extends SavedRequestAwareAuthenticationSuc
             Authentication authentication) throws ServletException, IOException {
 
         User user = (User) authentication.getPrincipal();
-        if (user.isPasswordChangeRequired()) {
-            getRedirectStrategy().sendRedirect(request, response, "/change_password");
-        } else if (user.isUsernameChangeRequired()) {
-            getRedirectStrategy().sendRedirect(request, response, "/change_username");
-        } else {
-            super.onAuthenticationSuccess(request, response, authentication);
+
+        if (user.isPasswordChangeRequired() || user.isUsernameChangeRequired()) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("Change required");
+            return;
         }
+
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 }

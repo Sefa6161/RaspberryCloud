@@ -2,6 +2,9 @@ package com.Projekt.RaspberryCloud.security;
 
 import com.Projekt.RaspberryCloud.handler.CustomAuthSuccessHandler;
 import com.Projekt.RaspberryCloud.service.JwtService;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -58,7 +61,10 @@ public class SecurityConfiguration {
                                 .formLogin(form -> form
                                                 .loginPage("/login")
                                                 .successHandler(customAuthSuccessHandler)
-                                                .failureUrl("/login?error=true")
+                                                .failureHandler((request, response, exception) -> {
+                                                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                                        response.getWriter().write("Login failed");
+                                                })
                                                 .permitAll())
 
                                 .logout(logout -> logout
@@ -67,7 +73,7 @@ public class SecurityConfiguration {
                                                 .invalidateHttpSession(true)
                                                 .deleteCookies("JSESSIONID"))
                                 .csrf(csrf -> csrf
-                                                .ignoringRequestMatchers("/api/**"));
+                                                .ignoringRequestMatchers("/api/**", "/login", "/logout"));
 
                 return http.build();
         }
