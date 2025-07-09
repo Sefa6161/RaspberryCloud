@@ -5,6 +5,8 @@ import com.Projekt.RaspberryCloud.service.JwtService;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -13,6 +15,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -72,10 +78,25 @@ public class SecurityConfiguration {
                                                 .logoutSuccessUrl("/login?logout")
                                                 .invalidateHttpSession(true)
                                                 .deleteCookies("JSESSIONID"))
+                                .cors(withDefaults())
                                 .csrf(csrf -> csrf
                                                 .ignoringRequestMatchers("/api/**", "/login", "/logout"));
 
                 return http.build();
+        }
+
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration config = new CorsConfiguration();
+                config.setAllowedOrigins(List.of("http://localhost:5173"));
+                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                config.setAllowCredentials(true);
+                config.setAllowedHeaders(List.of("*"));
+
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", config);
+
+                return source;
         }
 
 }

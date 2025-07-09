@@ -19,7 +19,11 @@ export default function Login() {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: formData,
+        // body: formData,
+        body: new URLSearchParams({
+          username,
+          password,
+        }),
         credentials: "include",
       });
 

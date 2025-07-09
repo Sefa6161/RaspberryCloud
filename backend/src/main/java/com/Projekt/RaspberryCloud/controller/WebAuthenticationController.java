@@ -18,16 +18,6 @@ public class WebAuthenticationController {
         this.userService = userService;
     }
 
-    @GetMapping("/login")
-    public String webLoginpage(Authentication authentication) {
-        if (authentication != null
-                && authentication.isAuthenticated()
-                && !(authentication instanceof AnonymousAuthenticationToken)) {
-            return "redirect:/dashboard";
-        }
-        return "login";
-    }
-
     @GetMapping("/signup")
     public String signupPage(Authentication authentication) {
         if (authentication != null
