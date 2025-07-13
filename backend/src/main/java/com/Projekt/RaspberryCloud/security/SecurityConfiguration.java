@@ -56,7 +56,7 @@ public class SecurityConfiguration {
                 http.securityMatcher("/web/**", "/login", "/logout",
                                 "/dashboard/**", "api/web/**",
                                 "/signup", "style.css", "/change_password", "/change_username", "/files/**",
-                                "/web/user/**")
+                                "/web/user/**", "api/*")
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/web/public/**", "/logout",
                                                                 "/api/web/signup", "/style.css", "/signup",

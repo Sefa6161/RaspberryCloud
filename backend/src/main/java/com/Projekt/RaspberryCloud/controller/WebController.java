@@ -1,7 +1,11 @@
 package com.Projekt.RaspberryCloud.controller;
 
 import java.nio.file.AccessDeniedException;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,6 +51,36 @@ public class WebController {
         model.addAttribute("usagePercent", usagePercent);
 
         return "dashboard";
+    }
+
+    @GetMapping("/api/dashboard")
+    public ResponseEntity<Map<String, Object>> checkAccess(Authentication authentication) throws AccessDeniedException {
+        if (authentication == null && !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String username = authentication.getName();
+
+        if (!AccessValidator.canAccess(username, authentication)) {
+            throw new AccessDeniedException("Access denied");
+        }
+
+        long fileCount = dataService.getFileCountForUser(authentication.getName());
+        long totalSpace = userService.getTotalSpace();
+        long freeSpace = userService.getFreeSpace();
+        long usedSpace = totalSpace - freeSpace;
+        int usagePercent = (int) ((double) usedSpace / totalSpace * 100);
+
+        System.out.println("fileCount: " + fileCount);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("fileCount", fileCount);
+        response.put("username", username);
+        response.put("usedSpace", formatBytes(usedSpace));
+        response.put("totalSpace", formatBytes(totalSpace));
+        response.put("usagePercent", usagePercent);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/change_password")
